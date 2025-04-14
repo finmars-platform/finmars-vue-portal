@@ -7,24 +7,16 @@
 			}
 		]"
 	>
-		<div
-			class="settings-item__header"
-			@click.stop.prevent="emits('expand', !item.isOpen)"
-		>
+		<div class="settings-item__header" @click.stop.prevent="emits('expand', !item.isOpen)">
 			<span class="settings-item__label">
 				{{ item.label }}
 			</span>
 
-			<span
-				class="settings-item__value"
-				:style="{ color: displayValue.color }"
-			>
+			<span class="settings-item__value" :style="{ color: displayValue.color }">
 				{{ displayValue.text }}
 			</span>
 
-			<FmIcon
-				:icon="item.isOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-			/>
+			<FmIcon :icon="item.isOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" />
 		</div>
 
 		<Transition name="fade" mode="out-in">
@@ -41,8 +33,7 @@
 							:label="option.title"
 							:value="option.value"
 							:class="{
-								'option--colored':
-									has(option, 'color') && option.color === 1
+								'option--colored': has(option, 'color') && option.color === 1
 							}"
 						/>
 					</FmRadioGroup>
@@ -103,9 +94,7 @@
 		}
 
 		if (input.type === 'radio') {
-			const option = options.value.find(
-				(o) => o.value === props.settings[key]
-			);
+			const option = options.value.find((o) => o.value === props.settings[key]);
 
 			if (option) {
 				return {

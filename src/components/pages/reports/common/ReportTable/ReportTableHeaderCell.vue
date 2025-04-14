@@ -1,0 +1,284 @@
+<template>
+	<div
+		ref="cellEl"
+		:class="[
+			'table-header-cell',
+			{
+				'table-header-cell__group': type === 'group',
+				'table-header-cell__column': type === 'column',
+				'table-header-cell--sorted': sortData.key === item.key,
+				'table-header-cell--resizing': movingConfig.changing
+			}
+		]"
+		:style="{ width: movingConfig.width }"
+		@click.stop.prevent
+	>
+		<FmIcon
+			v-if="prependIcon"
+			v-ripple.center.circle
+			:icon="prependIcon"
+			:class="['table-header-cell__prepend', { 'table-header-cell__prepend--disabled': isLoading }]"
+			@click.stop.prevent="toggleFolding"
+		/>
+
+		<span class="table-header-cell__text" @click.stop.prevent>
+			{{ item.layout_name || item.name }}
+
+			<FmTooltip type="secondary" activator="parent" location="top">
+				{{ item.layout_name || item.name }}
+			</FmTooltip>
+		</span>
+
+		<FmIcon
+			:icon="sortIcon"
+			v-ripple.center.circle
+			class="table-header-cell__sort"
+			@click.stop.prevent
+		/>
+
+		<FmIcon
+			icon="mdi-dots-vertical"
+			v-ripple.center.circle
+			:class="['table-header-cell__append', { 'table-header-cell__append--disabled': isLoading }]"
+			@click.stop.prevent="emits('open-cell-menu', $event)"
+		/>
+
+		<div ref="resizerEl" class="table-header-cell__resizer" @click.stop.prevent />
+	</div>
+</template>
+
+<script setup>
+	import { onBeforeUnmount, computed, onMounted, ref, watch } from 'vue';
+	import { storeToRefs } from 'pinia';
+	import get from 'lodash/get';
+	import size from 'lodash/size';
+	import { FmIcon, FmTooltip, Ripple } from '@finmars/ui';
+	import { useMainReportStore } from '~/stores/useMainReportStore';
+	import { REPORT_TABLE_CELL_MIN_WIDTH, REPORT_TABLE_CELL_MAX_WIDTH } from '../constants';
+	import set from 'lodash/set';
+
+	const vRipple = Ripple;
+
+	const props = defineProps({
+		type: {
+			type: String,
+			validator: (val) => ['group', 'column'].includes(val)
+		},
+		item: {
+			type: Object,
+			required: true
+		},
+		headerElement: {
+			type: Object
+		}
+	});
+	const emits = defineEmits(['open-cell-menu', 'cell-resize']);
+
+	const mainReportStore = useMainReportStore();
+	const { isLoading, sortGroup, sortColumn, tableData, groups, groupRows } =
+		storeToRefs(mainReportStore);
+	const { loadTableDataToGroupLevel } = mainReportStore;
+
+	const cellEl = ref(null);
+	const resizerEl = ref(null);
+
+	const sortData = computed(() => (props.type === 'group' ? sortGroup.value : sortColumn.value));
+	const cssGroupCellMinWidth = computed(() => `${REPORT_TABLE_CELL_MIN_WIDTH.group}px`);
+	const cssColumnCellMinWidth = computed(() => `${REPORT_TABLE_CELL_MIN_WIDTH.column}px`);
+
+	const prependIcon = computed(() => {
+		if (props.type === 'column') return false;
+
+		const isGroupFolded = get(props.item, ['report_settings', 'is_level_folded']);
+		return isGroupFolded ? 'mdi-menu-right' : 'mdi-menu-down';
+	});
+	const sortIcon = computed(() => {
+		if (sortData.value?.key !== props.item?.key) {
+			return 'mdi-sort-descending';
+		}
+
+		return sortData.value?.sort === 'desc' ? 'mdi-sort-descending' : 'mdi-sort-ascending';
+	});
+
+	const movingConfig = ref({
+		width:
+			props.item.style?.width ||
+			(props.type === 'group' ? cssGroupCellMinWidth.value : cssColumnCellMinWidth.value),
+		initialWidth: 0,
+		x: 0,
+		changing: false
+	});
+
+	function onMouseMove(ev) {
+		const dx = ev.clientX - movingConfig.value.x;
+		const newCellWidth = movingConfig.value.initialWidth + dx;
+		if (
+			newCellWidth >= REPORT_TABLE_CELL_MIN_WIDTH[props.type] &&
+			newCellWidth <= REPORT_TABLE_CELL_MAX_WIDTH
+		) {
+			movingConfig.value.width = `${newCellWidth}px`;
+			emits('cell-resize', movingConfig.value.width);
+		}
+	}
+
+	function onMouseUp() {
+		movingConfig.value.changing = false;
+		movingConfig.value.x = 0;
+		movingConfig.value.initialWidth = 0;
+		props.headerElement?.removeEventListener('mousemove', onMouseMove);
+		props.headerElement?.removeEventListener('mouseup', onMouseUp);
+	}
+
+	function onResizerMouseDown(ev) {
+		movingConfig.value.x = ev.clientX;
+		movingConfig.value.initialWidth = parseInt(movingConfig.value.width.slice(0, -2), 10);
+		movingConfig.value.changing = true;
+
+		props.headerElement?.addEventListener('mousemove', onMouseMove);
+		props.headerElement?.addEventListener('mouseup', onMouseUp);
+	}
+
+	async function toggleFolding() {
+		const isCurrentGroupOpen = !get(props.item, ['report_settings', 'is_level_folded']);
+		const newOpenFlagValue = !isCurrentGroupOpen;
+		const currentGroupIndex = (groups.value || []).findIndex((g) => g.key === props.item?.key);
+
+		if (currentGroupIndex === -1) return;
+
+		console.log('currentGroupIndex => ', currentGroupIndex);
+		if (!newOpenFlagValue) {
+			groupRows.value.forEach((r) => {
+				if (size(r.parents) >= currentGroupIndex) {
+					const prePath = r.parents.reduce((res, parentId) => {
+						res.push(parentId);
+						res.push('children');
+						return res;
+					}, []);
+					const path = ['children', ...prePath, r.___group_identifier, 'is_open'];
+					set(tableData.value, path, newOpenFlagValue);
+				}
+			});
+
+			return;
+		}
+
+		await loadTableDataToGroupLevel(currentGroupIndex);
+	}
+
+	onMounted(() => {
+		resizerEl.value.addEventListener('mousedown', onResizerMouseDown);
+	});
+
+	onBeforeUnmount(() => {
+		resizerEl.value.removeEventListener('mousedown', onResizerMouseDown);
+	});
+
+	watch(
+		() => props.item?.style?.width,
+		() => {
+			if (movingConfig.value.width !== props.item?.style?.width) {
+				movingConfig.value.width =
+					props.item.style?.width ||
+					(props.type === 'group' ? cssGroupCellMinWidth.value : cssColumnCellMinWidth.value);
+			}
+		}
+	);
+</script>
+
+<style lang="scss" scoped>
+	@use '@/assets/scss/core/_mixins' as mixins;
+
+	.table-header-cell {
+		--report-table-group-cell-min-width: v-bind(cssGroupCellMinWidth);
+		--report-table-column-cell-min-width: v-bind(cssColumnCellMinWidth);
+
+		position: relative;
+		height: 100%;
+		padding-top: 0;
+		padding-bottom: 0;
+		padding-right: 32px;
+		display: flex;
+		align-items: center;
+		overflow: hidden;
+		border-right: 1px solid var(--outline-variant);
+		font: var(--label-medium-pro-font);
+
+		&__group {
+			min-width: var(--report-table-group-cell-min-width);
+			padding-left: 32px;
+		}
+
+		&__column {
+			min-width: var(--report-table-column-cell-min-width);
+			padding-left: 8px;
+		}
+
+		&__prepend,
+		&__append {
+			position: absolute;
+			border-radius: 4px;
+			top: calc(var(--report-table-row-height) - 24px) / 2;
+			cursor: pointer;
+
+			&--disabled {
+				pointer-events: none;
+				cursor: auto;
+			}
+		}
+
+		&__prepend {
+			left: 4px;
+		}
+
+		&__append {
+			right: 4px;
+		}
+
+		&__text {
+			display: block;
+			position: relative;
+			width: 100%;
+			@include mixins.text-overflow-ellipsis();
+		}
+
+		&__sort {
+			position: absolute;
+			border-radius: 4px;
+			top: calc(var(--report-table-row-height) - 24px) / 2;
+			right: 32px;
+			opacity: 0;
+		}
+
+		&--sorted {
+			padding-right: 60px;
+
+			.table-header-cell__sort {
+				opacity: 1;
+				cursor: pointer;
+			}
+		}
+
+		&--resizing {
+			user-select: none;
+			border-right: 1px solid var(--primary);
+		}
+
+		&:hover {
+			padding-right: 60px;
+
+			.table-header-cell__sort {
+				opacity: 1;
+				cursor: pointer;
+			}
+		}
+
+		&__resizer {
+			position: absolute;
+			top: 0;
+			height: 100%;
+			right: 0;
+			width: 5px;
+			cursor: col-resize;
+		}
+	}
+</style>

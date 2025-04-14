@@ -496,6 +496,9 @@ export default {
 		put: prefix + '/ui/instrument-user-field/{id}/',
 		post: prefix + '/ui/instrument-user-field/'
 	},
+	instrumentUserFieldPrimaryList: {
+		get: prefix + '/ui/instrument-user-field/primary/'
+	},
 
 	listLayoutList: {
 		get: prefix + '/ui/list-layout/'
@@ -513,8 +516,7 @@ export default {
 		get: prefix + '/ui/list-layout/{id}/ping'
 	},
 	defaultListLayout: {
-		get:
-			prefix + '/ui/list-layout/?is_default=2&content_type={content_type}'
+		get: prefix + '/ui/list-layout/?is_default=2&content_type={content_type}'
 	},
 	ecosystemDefaults: {
 		get: prefix + '/users/ecosystem-default/'
@@ -539,9 +541,7 @@ export default {
 		delete: prefix + '/portfolios/portfolio-bundle/{id}/'
 	},
 	performanceFirstTransaction: {
-		get:
-			prefix +
-			'/reports/performance-report/first-transaction-date/?bundle={id}'
+		get: prefix + '/reports/performance-report/first-transaction-date/?bundle={id}'
 	},
 	interfaceAccess: {
 		get: prefix + '/ui/portal-interface-access/'
@@ -556,9 +556,7 @@ export default {
 		get: prefix + '/configuration/new-member-setup-configuration/{id}/'
 	},
 	installNewMemberSetupConfig: {
-		put:
-			prefix +
-			'/configuration/new-member-setup-configuration/{id}/install/'
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/'
 	},
 	unifiedData: {
 		get: prefix + '/data/{type}/'
@@ -576,9 +574,7 @@ export default {
 		get: prefix + '/configuration-sharing/my-invites/'
 	},
 	configurationJson: {
-		put:
-			prefix +
-			'/configuration/new-member-setup-configuration/{id}/install/'
+		put: prefix + '/configuration/new-member-setup-configuration/{id}/install/'
 	},
 	getTask: {
 		get: prefix + '/tasks/task/{id}/'
@@ -795,7 +791,10 @@ export default {
 		get: prefix + '/strategies/3/subgroup/'
 	},
 	defaultSettings: {
-		put: prefix + '/users/ecosystem-default/{id}/'
+		get: prefix + '/users/ecosystem-default/{id}/',
+		post: prefix + '/users/ecosystem-default/',
+		put: prefix + '/users/ecosystem-default/{id}/',
+		delete: prefix + '/users/ecosystem-default/{id}/'
 	},
 	/*complexTransactionUserField: {
 		get: prefix + '/ui/complex-transaction-user-field/',
@@ -857,9 +856,7 @@ export default {
 		get: 'https://marketplace.finmars.com/api/v1/configuration-release/'
 	},
 	marketplaceInstall: {
-		post:
-			prefix +
-			'/configuration/configuration/install-configuration-from-marketplace/'
+		post: prefix + '/configuration/configuration/install-configuration-from-marketplace/'
 	},
 	taskCard: {
 		get: prefix + '/tasks/task/{taskId}/'
@@ -946,9 +943,7 @@ export default {
 		get: prefix + '/configuration/configuration/{id}/export-configuration/'
 	},
 	pushConfigurationToMarketplace: {
-		put:
-			prefix +
-			'/configuration/configuration/{id}/push-configuration-to-marketplace/'
+		put: prefix + '/configuration/configuration/{id}/push-configuration-to-marketplace/'
 	},
 	setConfiguration: {
 		put: prefix + '/configuration/configuration/{id}/',
@@ -1056,6 +1051,25 @@ export default {
 
 	customFieldList: {
 		get: prefix + '/reports/{entityType}/custom-field/'
+	},
+
+	balanceReportGroups: {
+		post: prefix + '/reports/backend-balance-report/groups/'
+	},
+	balanceReportItems: {
+		post: prefix + '/reports/backend-balance-report/items/'
+	},
+	plReportGroups: {
+		post: prefix + '/reports/backend-pl-report/groups/'
+	},
+	plReportItems: {
+		post: prefix + '/reports/backend-pl-report/items/'
+	},
+	transactionReportGroups: {
+		post: prefix + '/reports/backend-transaction-report/groups/'
+	},
+	transactionReportItems: {
+		post: prefix + '/reports/backend-transaction-report/items/'
 	},
 
 	systemNotificationsCategoryList: {

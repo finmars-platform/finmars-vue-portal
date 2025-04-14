@@ -12,20 +12,12 @@
 			/>
 
 			<div class="number-format-settings-dialog__examples">
-				<span class="number-format-settings-dialog__examples-label">
-					Examples:
-				</span>
+				<span class="number-format-settings-dialog__examples-label"> Examples: </span>
 
 				<div class="number-format-settings-dialog__examples-value">
 					<span>{{ examples.positiveNumber }}</span>
 					<span>{{ examples.zero }}</span>
-					<span
-						:style="
-							settings.negative_color_format_id
-								? { color: 'var(--error)' }
-								: {}
-						"
-					>
+					<span :style="settings.negative_color_format_id ? { color: 'var(--error)' } : {}">
 						{{ examples.negativeNumber }}
 					</span>
 				</div>
@@ -46,7 +38,7 @@
 </template>
 
 <script setup>
-	import { computed, ref, watch } from 'vue';
+	import { computed, ref } from 'vue';
 	import cloneDeep from 'lodash/cloneDeep';
 	import isEqual from 'lodash/isEqual';
 	import size from 'lodash/size';
@@ -95,9 +87,7 @@
 			input: {
 				type: 'radio',
 				getColor: (currentSettings) => {
-					return currentSettings.negative_color_format_id === 1
-						? 'var(--error)'
-						: '';
+					return currentSettings.negative_color_format_id === 1 ? 'var(--error)' : '';
 				}
 			}
 		},
@@ -164,8 +154,6 @@
 		zero: applyFormatValue(0)
 	}));
 
-	console.log('SETTINGS => ', settings.value);
-
 	function applyFormatValue(value) {
 		return formatValue(
 			{ example: value },
@@ -212,16 +200,6 @@
 		};
 		emits('select', newSettings);
 	}
-
-	watch(
-		currentPreset,
-		() => {
-			console.log('CURRENT PRESET => ', currentPreset.value);
-		},
-		{
-			immediate: true
-		}
-	);
 </script>
 
 <style lang="scss" scoped>

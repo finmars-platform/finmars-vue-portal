@@ -1,443 +1,302 @@
 /* eslint-disable no-case-declarations */
 import cloneDeep from 'lodash/cloneDeep';
-import { getList as portfolioGetList } from '~/services/portfolio/portfolioService';
-import { getList as portfolioRegisterGetList } from '~/services/portfolio/portfolioRegisterService';
-import { getList as portfolioRegisterRecordGetList } from '~/services/portfolio/portfolioRegisterRecordService';
-import { getList as accountGetList } from '~/services/account/accountService';
-import { getList as accountTypeGetList } from '~/services/account/accountTypeService';
-import { getList as responsibleGetList } from '~/services/responsible/responsibleService';
-import { getList as counterpartyGetList } from '~/services/counterparty/counterpartyService';
-import { getList as responsibleGroupGetList } from '~/services/responsible/responsibleGroupService';
-import { getList as counterpartyGroupGetList } from '~/services/counterparty/counterpartyGroupService';
-import { getList as currencyGetList } from '~/services/currency/currencyService';
-import { getList as currencyHistoryGetList } from '~/services/currency/currencyHistoryService';
-import { getList as instrumentGetList } from '~/services/instrument/instrumentService';
-import { getList as portfolioTypeGetList } from '~/services/portfolio/portfolioTypeService';
-import { getList as portfolioReconcileGroupGetList } from '~/services/portfolio/portfolioReconcileGroupService';
-import { getList as instrumentTypeGetList } from '~/services/instrument/instrumentTypeService';
-import { getList as auditGetList } from '~/services/auditService';
-import { getList as transactionGetList } from '~/services/transaction/transactionService';
-import { getList as complexTransactionGetList } from '~/services/complex/complexTransactionService';
-import { getList as transactionTypeGetList } from '~/services/transaction/transactionTypeService';
-import { getList as instrumentPeriodicityGetList } from '~/services/instrument/instrumentPeriodicityService';
-import { getList as accrualCalculationModelGetList } from '~/services/accrual-calculation/accrualCalculationModelService';
-import { getList as instrumentPaymentSizeDetailGetList } from '~/services/instrument/instrumentPaymentSizeDetailService';
-import { getList as instrumentPricingConditionGetList } from '~/services/instrument/instrumentPricingConditionService';
-import { getList as instrumentCountryGetList } from '~/services/instrument/instrumentCountryService';
-import { getList as metaEventClassGetList } from '~/services/meta/metaEventClassService';
-import { getList as metaNotificationClassGetList } from '~/services/meta/metaNotificationClassService';
-import { getList as instrumentDailyPricingModelGetList } from '~/services/instrument/instrumentDailyPricingModelService';
-import { getList as priceDownloadSchemeGetList } from '~/services/price/priceDownloadSchemeService';
-import { getList as csvImportSchemeGetList } from '~/services/csvImportSchemeService';
-import { getList as complexImportSchemeGetList } from '~/services/complex/complexImportSchemeService';
-import { getList as transactionImportSchemeGetList } from '~/services/transaction/transactionImportSchemeService';
-import { getList as transactionTypeGroupGetList } from '~/services/transaction/transactionTypeGroupService';
-import { getList as strategyGetList } from '~/services/strategy/strategyService';
-import { getList as strategySubgroupGetList } from '~/services/strategy/strategySubgroupService';
-import { getList as instrumentClassGetList } from '~/services/instrument/instrumentClassService';
-import { getList as portfolioClassGetList } from '~/services/portfolio/portfolioClassService';
-import { getList as priceHistoryGetList } from '~/services/price/priceHistoryService';
-import { getList as portfolioHistoryGetList } from '~/services/portfolio/portfolioHistoryService';
-import { getList as portfolioReconcileHistoryGetList } from '~/services/portfolio/portfolioReconcileHistoryService';
-import { getList as pricingPolicyGetList } from '~/services/pricing/pricingPolicyService';
-import { getList as costMethodGetList } from '~/services/costMethodService';
-import { getList as transactionClassGetList } from '~/services/transaction/transactionClassService';
-import { getList as expressionProcedureGetList } from '~/services/expressionProcedureService';
-import { getList as dataProcedureGetList } from '~/services/dataProcedureService';
-import { getList as pricingProcedureGetList } from '~/services/pricing/pricingProcedureService';
-import { getList as configurationGetList } from '~/services/configurationService';
-import {
-	getBalanceReport,
-	getPerformanceReport,
-	getPnlReport,
-	getTransactionReport
-} from '~/services/reportService';
-
-import {
-	create as csvImportSchemeCreate,
-	update as csvImportSchemeUpdate
-} from '~/services/csvImportSchemeService';
-import {
-	create as complexImportSchemeCreate,
-	update as complexImportSchemeUpdate
-} from '~/services/complex/complexImportSchemeService';
-import {
-	create as transactionImportSchemeCreate,
-	update as transactionImportSchemeUpdate
-} from '~/services/transaction/transactionImportSchemeService';
-import {
-	create as portfolioCreate,
-	update as portfolioUpdate
-} from '~/services/portfolio/portfolioService';
-import {
-	create as portfolioTypeCreate,
-	update as portfolioTypeUpdate
-} from '~/services/portfolio/portfolioTypeService';
-import {
-	create as portfolioReconcileGroupCreate,
-	update as portfolioReconcileGroupUpdate
-} from '~/services/portfolio/portfolioReconcileGroupService';
-import {
-	create as portfolioRegisterCreate,
-	update as portfolioRegisterUpdate
-} from '~/services/portfolio/portfolioRegisterService';
-import {
-	create as accountCreate,
-	update as accountUpdate
-} from '~/services/account/accountService';
-import {
-	create as accountTypeCreate,
-	update as accountTypeUpdate
-} from '~/services/account/accountTypeService';
-import {
-	create as responsibleCreate,
-	update as responsibleUpdate
-} from '~/services/responsible/responsibleService';
-import {
-	create as responsibleGroupCreate,
-	update as responsibleGroupUpdate
-} from '~/services/responsible/responsibleGroupService';
-import {
-	create as counterpartyCreate,
-	update as counterpartyUpdate
-} from '~/services/counterparty/counterpartyService';
-import {
-	create as counterpartyGroupCreate,
-	update as counterpartyGroupUpdate
-} from '~/services/counterparty/counterpartyGroupService';
-import {
-	create as instrumentCreate,
-	update as instrumentUpdate
-} from '~/services/instrument/instrumentService';
-import {
-	create as instrumentTypeCreate,
-	update as instrumentTypeUpdate
-} from '~/services/instrument/instrumentTypeService';
-import {
-	create as currencyCreate,
-	update as currencyUpdate
-} from '~/services/currency/currencyService';
-import {
-	create as pricingPolicyCreate,
-	update as pricingPolicyUpdate
-} from '~/services/pricing/pricingPolicyService';
-import {
-	create as transactionCreate,
-	update as transactionUpdate
-} from '~/services/transaction/transactionService';
-import {
-	update as complexTransactionUpdate,
-	initRebookComplexTransaction,
-	rebookComplexTransaction
-} from '~/services/complex/complexTransactionService';
-import {
-	create as transactionTypeCreate,
-	update as transactionTypeUpdate
-} from '~/services/transaction/transactionTypeService';
-import {
-	create as transactionTypeGroupCreate,
-	update as transactionTypeGroupUpdate
-} from '~/services/transaction/transactionTypeGroupService';
-import {
-	create as priceHistoryCreate,
-	update as priceHistoryUpdate
-} from '~/services/price/priceHistoryService';
-import {
-	create as portfolioHistoryCreate,
-	update as portfolioHistoryUpdate
-} from '~/services/portfolio/portfolioHistoryService';
-import {
-	create as portfolioReconcileHistoryCreate,
-	update as portfolioReconcileHistoryUpdate
-} from '~/services/portfolio/portfolioReconcileHistoryService';
-import {
-	create as currencyHistoryCreate,
-	update as currencyHistoryUpdate
-} from '~/services/currency/currencyHistoryService';
-import {
-	create as strategyCreate,
-	update as strategyUpdate
-} from '~/services/strategy/strategyService';
-import {
-	create as strategyGroupCreate,
-	update as strategyGroupUpdate
-} from '~/services/strategy/strategyGroupService';
-import {
-	create as strategySubgroupCreate,
-	update as strategySubgroupUpdate
-} from '~/services/strategy/strategySubgroupService';
-import {
-	initBookComplexTransaction,
-	bookComplexTransaction
-} from '~/services/transaction/transactionTypeService';
-import {
-	create as expressionProcedureCreate,
-	update as expressionProcedureUpdate
-} from '~/services/expressionProcedureService';
-import {
-	create as dataProcedureCreate,
-	update as dataProcedureUpdate
-} from '~/services/dataProcedureService';
-import {
-	create as pricingProcedureCreate,
-	update as pricingProcedureUpdate
-} from '~/services/pricing/pricingProcedureService';
-import {
-	create as scheduleCreate,
-	update as scheduleUpdate
-} from '~/services/scheduleService';
-import {
-	create as configurationCreate,
-	update as configurationUpdate
-} from '~/services/configurationService';
-import { update as priceHistoryErrorUpdate } from '~/services/price/priceHistoryErrorService';
-import { update as currencyHistoryErrorUpdate } from '~/services/currency/currencyHistoryErrorService';
-import { updateDashboardLayout } from '~/services/uiService';
+import * as portfolioService from '~/services/portfolio/portfolioService';
+import * as portfolioRegisterService from '~/services/portfolio/portfolioRegisterService';
+import * as portfolioRegisterRecordService from '~/services/portfolio/portfolioRegisterRecordService';
+import * as accountService from '~/services/account/accountService';
+import * as accountTypeService from '~/services/account/accountTypeService';
+import * as responsibleService from '~/services/responsible/responsibleService';
+import * as counterpartyService from '~/services/counterparty/counterpartyService';
+import * as responsibleGroupService from '~/services/responsible/responsibleGroupService';
+import * as counterpartyGroupService from '~/services/counterparty/counterpartyGroupService';
+import * as currencyService from '~/services/currency/currencyService';
+import * as currencyHistoryService from '~/services/currency/currencyHistoryService';
+import * as instrumentService from '~/services/instrument/instrumentService';
+import * as portfolioTypeService from '~/services/portfolio/portfolioTypeService';
+import * as portfolioReconcileGroupService from '~/services/portfolio/portfolioReconcileGroupService';
+import * as instrumentTypeService from '~/services/instrument/instrumentTypeService';
+import * as auditService from '~/services/auditService';
+import * as transactionService from '~/services/transaction/transactionService';
+import * as complexTransactionService from '~/services/complex/complexTransactionService';
+import * as transactionTypeService from '~/services/transaction/transactionTypeService';
+import * as instrumentPeriodicityService from '~/services/instrument/instrumentPeriodicityService';
+import * as accrualCalculationModelService from '~/services/accrual-calculation/accrualCalculationModelService';
+import * as instrumentPaymentSizeDetailService from '~/services/instrument/instrumentPaymentSizeDetailService';
+import * as instrumentPricingConditionService from '~/services/instrument/instrumentPricingConditionService';
+import * as instrumentCountryService from '~/services/instrument/instrumentCountryService';
+import * as metaEventClassService from '~/services/meta/metaEventClassService';
+import * as metaNotificationClassService from '~/services/meta/metaNotificationClassService';
+import * as instrumentDailyPricingModelService from '~/services/instrument/instrumentDailyPricingModelService';
+import * as priceDownloadSchemeService from '~/services/price/priceDownloadSchemeService';
+import * as csvImportSchemeService from '~/services/csvImportSchemeService';
+import * as complexImportSchemeService from '~/services/complex/complexImportSchemeService';
+import * as transactionImportSchemeService from '~/services/transaction/transactionImportSchemeService';
+import * as transactionTypeGroupService from '~/services/transaction/transactionTypeGroupService';
+import * as strategyService from '~/services/strategy/strategyService';
+import * as strategySubgroupService from '~/services/strategy/strategySubgroupService';
+import * as instrumentClassService from '~/services/instrument/instrumentClassService';
+import * as portfolioClassService from '~/services/portfolio/portfolioClassService';
+import * as priceHistoryService from '~/services/price/priceHistoryService';
+import * as portfolioHistoryService from '~/services/portfolio/portfolioHistoryService';
+import * as portfolioReconcileHistoryService from '~/services/portfolio/portfolioReconcileHistoryService';
+import * as pricingPolicyService from '~/services/pricing/pricingPolicyService';
+import * as costMethodService from '~/services/costMethodService';
+import * as transactionClassService from '~/services/transaction/transactionClassService';
+import * as expressionProcedureService from '~/services/expressionProcedureService';
+import * as dataProcedureService from '~/services/dataProcedureService';
+import * as pricingProcedureService from '~/services/pricing/pricingProcedureService';
+import * as configurationService from '~/services/configurationService';
+import * as reportService from '~/services/reportService';
+import * as strategyGroupService from '~/services/strategy/strategyGroupService';
+import * as scheduleService from '~/services/scheduleService';
+import * as priceHistoryErrorService from '~/services/price/priceHistoryErrorService';
+import * as currencyHistoryErrorService from '~/services/currency/currencyHistoryErrorService';
+import * as uiService from '~/services/uiService';
 
 export function getList(mapEntityType, options) {
 	switch (mapEntityType) {
 		case 'portfolio':
-			return portfolioGetList(options);
+			return portfolioService.getList(options);
 		case 'portfolio-register':
-			return portfolioRegisterGetList(options);
+			return portfolioRegisterService.getList(options);
 		case 'portfolio-register-record':
-			return portfolioRegisterRecordGetList(options);
+			return portfolioRegisterRecordService.getList(options);
 		case 'account':
-			return accountGetList(options);
+			return accountService.getList(options);
 		case 'account-type':
-			return accountTypeGetList(options);
+			return accountTypeService.getList(options);
 		case 'responsible':
-			return responsibleGetList(options);
+			return responsibleService.getList(options);
 		case 'counterparty':
-			return counterpartyGetList(options);
+			return counterpartyService.getList(options);
 		case 'responsible-group':
-			return responsibleGroupGetList(options);
+			return responsibleGroupService.getList(options);
 		case 'counterparty-group':
-			return counterpartyGroupGetList(options);
+			return counterpartyGroupService.getList(options);
 		case 'currency':
-			return currencyGetList(options);
+			return currencyService.getList(options);
 		case 'currency-history':
-			return currencyHistoryGetList(options);
+			return currencyHistoryService.getList(options);
 		case 'instrument':
-			return instrumentGetList(options);
+			return instrumentService.getList(options);
 		case 'portfolio-type':
-			return portfolioTypeGetList(options);
+			return portfolioTypeService.getList(options);
 		case 'portfolio-reconcile-group':
-			return portfolioReconcileGroupGetList(options);
+			return portfolioReconcileGroupService.getList(options);
 		case 'instrument-type':
-			return instrumentTypeGetList(options);
+			return instrumentTypeService.getList(options);
 		case 'audit-transaction':
 		case 'audit-instrument':
-			return auditGetList(options);
+			return auditService.getList(options);
 		case 'transaction':
-			return transactionGetList(options);
+			return transactionService.getList(options);
 		case 'complex-transaction':
-			return complexTransactionGetList(options);
+			return complexTransactionService.getList(options);
 		case 'transaction-type':
-			return transactionTypeGetList(options);
+			return transactionTypeService.getList(options);
 		case 'periodicity':
-			return instrumentPeriodicityGetList(options);
+			return instrumentPeriodicityService.getList(options);
 		case 'accrual-calculation-model':
-			return accrualCalculationModelGetList(options);
+			return accrualCalculationModelService.getList(options);
 		case 'payment-size-detail':
-			return instrumentPaymentSizeDetailGetList(options);
+			return instrumentPaymentSizeDetailService.getList(options);
 		case 'pricing-condition':
-			return instrumentPricingConditionGetList(options);
+			return instrumentPricingConditionService.getList(options);
 		case 'country':
-			return instrumentCountryGetList(options);
+			return instrumentCountryService.getList(options);
 		case 'event-class':
-			return metaEventClassGetList(options);
+			return metaEventClassService.getList(options);
 		case 'notification-class':
-			return metaNotificationClassGetList(options);
+			return metaNotificationClassService.getList(options);
 		case 'daily-pricing-model':
-			return instrumentDailyPricingModelGetList(options);
+			return instrumentDailyPricingModelService.getList(options);
 		case 'price-download-scheme':
-			return priceDownloadSchemeGetList(options);
+			return priceDownloadSchemeService.getList(options);
 		case 'csv-import-scheme':
-			return csvImportSchemeGetList(options);
+			return csvImportSchemeService.getList(options);
 		case 'complex-import-scheme':
-			return complexImportSchemeGetList(options);
+			return complexImportSchemeService.getList(options);
 		case 'complex-transaction-import-scheme':
-			return transactionImportSchemeGetList(options);
+			return transactionImportSchemeService.getList(options);
 		case 'transaction-type-group':
-			return transactionTypeGroupGetList(options);
+			return transactionTypeGroupService.getList(options);
 		case 'strategy-1':
-			return strategyGetList(1, options);
+			return strategyService.getList(1, options);
 		case 'strategy-2':
-			return strategyGetList(2, options);
+			return strategyService.getList(2, options);
 		case 'strategy-3':
-			return strategyGetList(3, options);
+			return strategyService.getList(3, options);
 		case 'strategy-1-subgroup':
-			return strategySubgroupGetList(1, options);
+			return strategySubgroupService.getList(1, options);
 		case 'strategy-2-subgroup':
-			return strategySubgroupGetList(2, options);
+			return strategySubgroupService.getList(2, options);
 		case 'strategy-3-subgroup':
-			return strategySubgroupGetList(3, options);
+			return strategySubgroupService.getList(3, options);
 		case 'instrument-class':
-			return instrumentClassGetList(options);
+			return instrumentClassService.getList(options);
 		case 'portfolio-class':
-			return portfolioClassGetList(options);
+			return portfolioClassService.getList(options);
 		case 'price-history':
-			return priceHistoryGetList(options);
+			return priceHistoryService.getList(options);
 		case 'portfolio-history':
-			return portfolioHistoryGetList(options);
+			return portfolioHistoryService.getList(options);
 		case 'portfolio-reconcile-history':
-			return portfolioReconcileHistoryGetList(options);
+			return portfolioReconcileHistoryService.getList(options);
 		case 'pricing-policy':
-			return pricingPolicyGetList(options);
+			return pricingPolicyService.getList(options);
 		case 'cost-method':
-			return costMethodGetList(options);
+			return costMethodService.getList(options);
 		case 'transaction-class':
-			return transactionClassGetList(options);
+			return transactionClassService.getList(options);
 		case 'expression-procedure':
-			return expressionProcedureGetList(options);
+			return expressionProcedureService.getList(options);
 		case 'data-procedure':
-			return dataProcedureGetList(options);
+			return dataProcedureService.getList(options);
 		case 'pricing-procedure':
-			return pricingProcedureGetList(options);
+			return pricingProcedureService.getList(options);
 		case 'balance-report':
-			return getBalanceReport(options);
+			return reportService.getBalanceReport(options);
 		case 'pl-report':
-			return getPnlReport(options);
+			return reportService.getPnlReport(options);
 		case 'transaction-report':
-			return getTransactionReport(options);
+			return reportService.getTransactionReport(options);
 		case 'performance-report':
-			return getPerformanceReport(options);
+			return reportService.getPerformanceReport(options);
 		case 'configuration':
-			return configurationGetList(options);
+			return configurationService.getList(options);
 	}
 }
 
 export async function create(entityType, entity) {
 	switch (entityType) {
 		case 'csv-import-scheme':
-			return csvImportSchemeCreate(entity);
+			return csvImportSchemeService.create(entity);
 		case 'complex-import-scheme':
-			return complexImportSchemeCreate(entity);
+			return complexImportSchemeService.create(entity);
 		case 'complex-transaction-import-scheme':
-			return transactionImportSchemeCreate(entity);
+			return transactionImportSchemeService.create(entity);
 		case 'portfolio':
 			entity.counterparties = entity.counterparties || [];
 			entity.accounts = entity.accounts || [];
 			entity.responsibles = entity.responsibles || [];
 			entity.transaction_types = entity.transaction_types || [];
-			return portfolioCreate(entity);
+			return portfolioService.create(entity);
 		case 'portfolio-type':
-			return portfolioTypeCreate(entity);
+			return portfolioTypeService.create(entity);
 		case 'portfolio-reconcile-group':
-			return portfolioReconcileGroupCreate(entity);
+			return portfolioReconcileGroupService.create(entity);
 		case 'portfolio-register':
-			return portfolioRegisterCreate(entity);
+			return portfolioRegisterService.create(entity);
 		case 'account':
 			entity.portfolios = entity.portfolios || [];
-			return accountCreate(entity);
+			return accountService.create(entity);
 		case 'account-type':
-			return accountTypeCreate(entity);
+			return accountTypeService.create(entity);
 		case 'responsible':
-			return responsibleCreate(entity);
+			return responsibleService.create(entity);
 		case 'responsible-group':
-			return responsibleGroupCreate(entity);
+			return responsibleGroupService.create(entity);
 		case 'counterparty':
-			return counterpartyCreate(entity);
+			return counterpartyService.create(entity);
 		case 'counterparty-group':
-			return counterpartyGroupCreate(entity);
+			return counterpartyGroupService.create(entity);
 		case 'instrument':
-			return instrumentCreate(entity);
+			return instrumentService.create(entity);
 		case 'instrument-type':
-			return instrumentTypeCreate(entity);
+			return instrumentTypeService.create(entity);
 		case 'currency':
-			return currencyCreate(entity);
+			return currencyService.create(entity);
 		case 'pricing-policy':
-			return pricingPolicyCreate(entity);
+			return pricingPolicyService.create(entity);
 		case 'transaction':
-			return transactionCreate(entity);
+			return transactionService.create(entity);
 		case 'transaction-type':
-			return transactionTypeCreate(entity);
+			return transactionTypeService.create(entity);
 		case 'transaction-type-group':
-			return transactionTypeGroupCreate(entity);
+			return transactionTypeGroupService.create(entity);
 		case 'price-history':
-			return priceHistoryCreate(entity);
+			return priceHistoryService.create(entity);
 		case 'portfolio-history':
-			return portfolioHistoryCreate(entity);
+			return portfolioHistoryService.create(entity);
 		case 'portfolio-reconcile-history':
-			return portfolioReconcileHistoryCreate(entity);
+			return portfolioReconcileHistoryService.create(entity);
 		case 'currency-history':
-			return currencyHistoryCreate(entity);
+			return currencyHistoryService.create(entity);
 		case 'strategy-1':
-			return strategyCreate(1, entity);
+			return strategyService.create(1, entity);
 		case 'strategy-2':
-			return strategyCreate(2, entity);
+			return strategyService.create(2, entity);
 		case 'strategy-3':
-			return strategyCreate(3, entity);
+			return strategyService.create(3, entity);
 		case 'strategy-1-group':
-			return strategyGroupCreate(1, entity);
+			return strategyGroupService.create(1, entity);
 		case 'strategy-2-group':
-			return strategyGroupCreate(2, entity);
+			return strategyGroupService.create(2, entity);
 		case 'strategy-3-group':
-			return strategyGroupCreate(3, entity);
+			return strategyGroupService.create(3, entity);
 		case 'strategy-1-subgroup':
-			return strategySubgroupCreate(1, entity);
+			return strategySubgroupService.create(1, entity);
 		case 'strategy-2-subgroup':
-			return strategySubgroupCreate(2, entity);
+			return strategySubgroupService.create(2, entity);
 		case 'strategy-3-subgroup':
-			return strategySubgroupCreate(3, entity);
+			return strategySubgroupService.create(3, entity);
 		case 'complex-transaction':
-			const res = await initBookComplexTransaction(entity.transaction_type);
+			const res = await transactionTypeService.initBookComplexTransaction(entity.transaction_type);
 			const data = Object.assign(res, entity);
-			return bookComplexTransaction(entity.transaction_type, data);
+			return transactionTypeService.bookComplexTransaction(entity.transaction_type, data);
 		case 'expression-procedure':
-			return expressionProcedureCreate(entity);
+			return expressionProcedureService.create(entity);
 		case 'data-procedure':
-			return dataProcedureCreate(entity);
+			return dataProcedureService.create(entity);
 		case 'pricing-procedure':
-			return pricingProcedureCreate(entity);
+			return pricingProcedureService.create(entity);
 		case 'schedule':
-			return scheduleCreate(entity);
+			return scheduleService.create(entity);
 		case 'configuration':
-			return configurationCreate(entity);
+			return configurationService.create(entity);
 	}
 }
 
 export async function update(entityType, entity) {
 	switch (entityType) {
 		case 'csv-import-scheme':
-			return csvImportSchemeUpdate(entity);
+			return csvImportSchemeService.update(entity);
 		case 'complex-import-scheme':
-			return complexImportSchemeUpdate(entity);
+			return complexImportSchemeService.update(entity);
 		case 'complex-transaction-import-scheme':
-			return transactionImportSchemeUpdate(entity);
+			return transactionImportSchemeService.update(entity);
 		case 'portfolio':
-			return portfolioUpdate(entity);
+			return portfolioService.update(entity);
 		case 'portfolio-type':
-			return portfolioTypeUpdate(entity);
+			return portfolioTypeService.update(entity);
 		case 'portfolio-reconcile-group':
-			return portfolioReconcileGroupUpdate(entity);
+			return portfolioReconcileGroupService.update(entity);
 		case 'portfolio-register':
-			return portfolioRegisterUpdate(entity);
+			return portfolioRegisterService.update(entity);
 		case 'currency':
-			return currencyUpdate(entity);
+			return currencyService.update(entity);
 		case 'account':
-			return accountUpdate(entity);
+			return accountService.update(entity);
 		case 'account-type':
-			return accountTypeUpdate(entity);
+			return accountTypeService.update(entity);
 		case 'responsible':
-			return responsibleUpdate(entity);
+			return responsibleService.update(entity);
 		case 'responsible-group':
-			return responsibleGroupUpdate(entity);
+			return responsibleGroupService.update(entity);
 		case 'counterparty':
-			return counterpartyUpdate(entity);
+			return counterpartyService.update(entity);
 		case 'counterparty-group':
-			return counterpartyGroupUpdate(entity);
+			return counterpartyGroupService.update(entity);
 		case 'instrument':
-			return instrumentUpdate(entity);
+			return instrumentService.update(entity);
 		case 'instrument-type':
-			return instrumentTypeUpdate(entity);
+			return instrumentTypeService.update(entity);
 		case 'transaction':
-			return transactionUpdate(entity);
+			return transactionService.update(entity);
 		case 'complex-transaction-default':
-			return complexTransactionUpdate(entity);
+			return complexTransactionService.update(entity);
 		case 'complex-transaction':
-			const data = await initRebookComplexTransaction(entity.id);
+			const data = await complexTransactionService.initRebookComplexTransaction(entity.id);
 			const updatedEntity = cloneDeep(entity);
 			const originValues = cloneDeep(entity.values);
 			updatedEntity.values = data.values;
@@ -454,54 +313,80 @@ export async function update(entityType, entity) {
 				});
 			});
 
-			return rebookComplexTransaction(updatedEntity);
+			return complexTransactionService.rebookComplexTransaction(updatedEntity);
 		case 'transaction-type':
-			return transactionTypeUpdate(entity);
+			return transactionTypeService.update(entity);
 		case 'transaction-type-group':
-			return transactionTypeGroupUpdate(entity);
+			return transactionTypeGroupService.update(entity);
 		case 'price-history':
-			return priceHistoryUpdate(entity);
+			return priceHistoryService.update(entity);
 		case 'portfolio-history':
-			return portfolioHistoryUpdate(entity);
+			return portfolioHistoryService.update(entity);
 		case 'portfolio-reconcile-history':
-			return portfolioReconcileHistoryUpdate(entity);
+			return portfolioReconcileHistoryService.update(entity);
 		case 'pricing-policy':
-			return pricingPolicyUpdate(entity);
+			return pricingPolicyService.update(entity);
 		case 'currency-history':
-			return currencyHistoryUpdate(entity);
+			return currencyHistoryService.update(entity);
 		case 'strategy-1':
-			return strategyUpdate(1, entity);
+			return strategyService.update(1, entity);
 		case 'strategy-2':
-			return strategyUpdate(2, entity);
+			return strategyService.update(2, entity);
 		case 'strategy-3':
-			return strategyUpdate(3, entity);
+			return strategyService.update(3, entity);
 		case 'strategy-1-group':
-			return strategyGroupUpdate(1, entity);
+			return strategyGroupService.update(1, entity);
 		case 'strategy-2-group':
-			return strategyGroupUpdate(2, entity);
+			return strategyGroupService.update(2, entity);
 		case 'strategy-3-group':
-			return strategyGroupUpdate(3, entity);
+			return strategyGroupService.update(3, entity);
 		case 'strategy-1-subgroup':
-			return strategySubgroupUpdate(1, entity);
+			return strategySubgroupService.update(1, entity);
 		case 'strategy-2-subgroup':
-			return strategySubgroupUpdate(2, entity);
+			return strategySubgroupService.update(2, entity);
 		case 'strategy-3-subgroup':
-			return strategySubgroupUpdate(3, entity);
+			return strategySubgroupService.update(3, entity);
 		case 'price-history-error':
-			return priceHistoryErrorUpdate(entity);
+			return priceHistoryErrorService.update(entity);
 		case 'currency-history-error':
-			return currencyHistoryErrorUpdate(entity);
+			return currencyHistoryErrorService.update(entity);
 		case 'expression-procedure':
-			return expressionProcedureUpdate(entity);
+			return expressionProcedureService.update(entity);
 		case 'data-procedure':
-			return dataProcedureUpdate(entity);
+			return dataProcedureService.update(entity);
 		case 'pricing-procedure':
-			return pricingProcedureUpdate(entity);
+			return pricingProcedureService.update(entity);
 		case 'schedule':
-			return scheduleUpdate(entity);
+			return scheduleService.update(entity);
 		case 'configuration':
-			return configurationUpdate(entity);
+			return configurationService.update(entity);
 		case 'dashboard-layout':
-			return updateDashboardLayout(entity);
+			return uiService.updateDashboardLayout(entity);
+	}
+}
+
+export async function getListReportGroups(entityType, options = {}) {
+	switch (entityType) {
+		case 'balance-report':
+			return reportService.getBackendBalanceReportGroups(options);
+		case 'pl-report':
+			return reportService.getBackendPnlReportGroups(options);
+		case 'transaction-report':
+			return reportService.getBackendTransactionReportGroups(options);
+	}
+}
+
+export async function getListReportItems(entityType, options = {}) {
+	try {
+		switch (entityType) {
+			case 'balance-report':
+				return reportService.getBackendBalanceReportItems(options);
+			case 'pl-report':
+				return reportService.getBackendPnlReportItems(options);
+			case 'transaction-report':
+				return reportService.getBackendTransactionReportItems(options);
+		}
+	} catch (error) {
+		console.log('### getListReportItems => ', error);
 	}
 }

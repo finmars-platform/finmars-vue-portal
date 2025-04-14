@@ -1,22 +1,13 @@
 <template>
 	<div class="report-viewer-matrix-component-dialog">
 		<div class="body">
-			<FmTabs
-				:tabs="REPORT_COMPONENT_TABS"
-				variant="normal"
-				@change-tab="activeTab = $event"
-			/>
+			<FmTabs :tabs="REPORT_COMPONENT_TABS" variant="normal" @change-tab="activeTab = $event" />
 
 			<div class="content">
 				<!-- TAB: Main -->
 				<template v-if="activeTab === 0">
 					<div class="row-grid">
-						<FmTextField
-							v-model="itemData.name"
-							label="Name"
-							outlined
-							:disabled="isLoading"
-						/>
+						<FmTextField v-model="itemData.name" label="Name" outlined :disabled="isLoading" />
 
 						<UserCodeField
 							v-model="itemData.user_code"
@@ -43,9 +34,7 @@
 							:options="componentsTypesToListen"
 							label="Component to Listen"
 							:disabled="isLoading"
-							@update:value="
-								itemData.settings.components_to_listen = $event
-							"
+							@update:value="itemData.settings.components_to_listen = $event"
 						/>
 
 						<TableAttributeSelector
@@ -86,16 +75,10 @@
 							label="Formula"
 							variant="outlined"
 							:disabled="isLoading"
-							@update:model-value="
-								itemData.settings.subtotal_formula_id = $event
-							"
+							@update:model-value="itemData.settings.subtotal_formula_id = $event"
 						/>
 
-						<FmButton
-							type="tertiary"
-							rounded
-							@click.stop.prevent="openNumberFormatSettingsDialog"
-						>
+						<FmButton type="tertiary" rounded @click.stop.prevent="openNumberFormatSettingsDialog">
 							Format Settings
 						</FmButton>
 					</div>
@@ -107,9 +90,7 @@
 							variant="outlined"
 							label="Matrix type"
 							:disabled="isLoading"
-							@update:model-value="
-								itemData.settings.matrix_view = $event
-							"
+							@update:model-value="itemData.settings.matrix_view = $event"
 						/>
 					</div>
 				</template>
@@ -134,17 +115,13 @@
 							variant="outlined"
 							label="Hide empty columns or / and rows"
 							:disabled="isLoading"
-							@update:model-value="
-								itemData.settings.hide_empty_lines = $event
-							"
+							@update:model-value="itemData.settings.hide_empty_lines = $event"
 						/>
 
 						<FmButton
 							type="secondary"
 							rounded
-							@click.stop.prevent="
-								itemData.settings.hide_empty_lines = ''
-							"
+							@click.stop.prevent="itemData.settings.hide_empty_lines = ''"
 							style="align-self: center"
 						>
 							Clear
@@ -153,17 +130,12 @@
 
 					<div class="row-grid">
 						<FmSelect
-							:model-value="
-								itemData.settings.styles.cell.text_align
-							"
+							:model-value="itemData.settings.styles.cell.text_align"
 							:options="TEXT_CELL_ALIGN_STYLES"
 							variant="outlined"
 							label="Style. Cell Text Align"
 							:disabled="isLoading"
-							@update:model-value="
-								itemData.settings.styles.cell.text_align =
-									$event
-							"
+							@update:model-value="itemData.settings.styles.cell.text_align = $event"
 						/>
 
 						<FmCheckbox
@@ -173,9 +145,7 @@
 						/>
 
 						<FmCheckbox
-							v-model="
-								itemData.settings.calculate_name_column_width
-							"
+							v-model="itemData.settings.calculate_name_column_width"
 							label="Calculate width for column with names"
 							:disabled="isLoading"
 						/>
@@ -186,48 +156,33 @@
 				<template v-if="activeTab === 2">
 					<div class="row-grid">
 						<TableAttributesMenuConstructor
-							:value="
-								itemData.user_settings?.available_abscissa_keys
-							"
+							:value="itemData.user_settings?.available_abscissa_keys"
 							label="Axis X Columns"
 							title="Axis X Columns"
 							:available-attrs="attributes"
 							is-report
 							:disabled="isLoading"
-							@update:value="
-								itemData.user_settings.available_abscissa_keys =
-									$event
-							"
+							@update:value="itemData.user_settings.available_abscissa_keys = $event"
 						/>
 
 						<TableAttributesMenuConstructor
-							:value="
-								itemData.user_settings?.available_ordinate_keys
-							"
+							:value="itemData.user_settings?.available_ordinate_keys"
 							label="Axis Y Columns"
 							title="Axis Y Columns"
 							:available-attrs="attributes"
 							is-report
 							:disabled="isLoading"
-							@update:value="
-								itemData.user_settings.available_ordinate_keys =
-									$event
-							"
+							@update:value="itemData.user_settings.available_ordinate_keys = $event"
 						/>
 
 						<TableAttributesMenuConstructor
-							:value="
-								itemData.user_settings?.available_value_keys
-							"
+							:value="itemData.user_settings?.available_value_keys"
 							label="Values"
 							title="Values"
 							:available-attrs="numericAttributes"
 							is-report
 							:disabled="isLoading"
-							@update:value="
-								itemData.user_settings.available_value_keys =
-									$event
-							"
+							@update:value="itemData.user_settings.available_value_keys = $event"
 						/>
 					</div>
 				</template>
@@ -236,17 +191,11 @@
 				<template v-if="activeTab === 3">
 					<div class="row-grid">
 						<TwoFieldsMultiselect
-							:value="
-								itemData.settings.linked_components
-									.active_object
-							"
+							:value="itemData.settings.linked_components.active_object"
 							:options="componentsForMultiselector"
 							label="Select Link to Component"
 							:disabled="isLoading"
-							@update:value="
-								itemData.settings.linked_components.active_object =
-									$event
-							"
+							@update:value="itemData.settings.linked_components.active_object = $event"
 						/>
 					</div>
 				</template>
@@ -256,19 +205,14 @@
 					<div class="row-grid">
 						<div
 							v-if="
-								itemData.settings?.entity_type ===
-									'balance-report' ||
+								itemData.settings?.entity_type === 'balance-report' ||
 								(itemData.type === 'report_viewer_matrix' &&
-									itemData.settings?.matrix_type ===
-										'balance')
+									itemData.settings?.matrix_type === 'balance')
 							"
 							class="cell"
 						>
 							<FmSelect
-								:model-value="
-									itemData.settings.linked_components
-										.report_settings.report_date
-								"
+								:model-value="itemData.settings.linked_components.report_settings.report_date"
 								:options="
 									dateControlComponentsTypes.map((t) => ({
 										title: t.name,
@@ -279,8 +223,7 @@
 								label="Date"
 								:disabled="isLoading"
 								@update:model-value="
-									itemData.settings.linked_components.report_settings.report_date =
-										$event
+									itemData.settings.linked_components.report_settings.report_date = $event
 								"
 							/>
 
@@ -289,9 +232,7 @@
 								rounded
 								:disabled="isLoading"
 								@click.stop.prevent="
-									clearSelect(
-										'settings.linked_components.report_settings.report_date'
-									)
+									clearSelect('settings.linked_components.report_settings.report_date')
 								"
 							>
 								Clear
@@ -301,16 +242,12 @@
 						<template
 							v-if="
 								itemData.settings.entity_type === 'pl-report' ||
-								(itemData.type === 'report_viewer_matrix' &&
-									itemData.settings.matrix_type === 'pl')
+								(itemData.type === 'report_viewer_matrix' && itemData.settings.matrix_type === 'pl')
 							"
 						>
 							<div class="cell">
 								<FmSelect
-									:model-value="
-										itemData.settings.linked_components
-											.report_settings.pl_first_date
-									"
+									:model-value="itemData.settings.linked_components.report_settings.pl_first_date"
 									:options="
 										dateControlComponentsTypes.map((t) => ({
 											title: t.name,
@@ -321,8 +258,7 @@
 									label="Date From (PL First Date)"
 									:disabled="isLoading"
 									@update:model-value="
-										itemData.settings.linked_components.report_settings.pl_first_date =
-											$event
+										itemData.settings.linked_components.report_settings.pl_first_date = $event
 									"
 								/>
 
@@ -331,9 +267,7 @@
 									rounded
 									:disabled="isLoading"
 									@click.stop.prevent="
-										clearSelect(
-											'settings.linked_components.report_settings.pl_first_date'
-										)
+										clearSelect('settings.linked_components.report_settings.pl_first_date')
 									"
 								>
 									Clear
@@ -342,10 +276,7 @@
 
 							<div class="cell">
 								<FmSelect
-									:model-value="
-										itemData.settings.linked_components
-											.report_settings.report_date
-									"
+									:model-value="itemData.settings.linked_components.report_settings.report_date"
 									:options="
 										dateControlComponentsTypes.map((t) => ({
 											title: t.name,
@@ -356,8 +287,7 @@
 									label="Date To"
 									:disabled="isLoading"
 									@update:model-value="
-										itemData.settings.linked_components.report_settings.report_date =
-											$event
+										itemData.settings.linked_components.report_settings.report_date = $event
 									"
 								/>
 
@@ -366,9 +296,7 @@
 									rounded
 									:disabled="isLoading"
 									@click.stop.prevent="
-										clearSelect(
-											'settings.linked_components.report_settings.report_date'
-										)
+										clearSelect('settings.linked_components.report_settings.report_date')
 									"
 								>
 									Clear
@@ -376,18 +304,10 @@
 							</div>
 						</template>
 
-						<template
-							v-if="
-								itemData.settings.entity_type ===
-								'transaction-report'
-							"
-						>
+						<template v-if="itemData.settings.entity_type === 'transaction-report'">
 							<div class="cell">
 								<FmSelect
-									:model-value="
-										itemData.settings.linked_components
-											.report_settings.begin_date
-									"
+									:model-value="itemData.settings.linked_components.report_settings.begin_date"
 									:options="
 										dateControlComponentsTypes.map((t) => ({
 											title: t.name,
@@ -398,8 +318,7 @@
 									label="Date From"
 									:disabled="isLoading"
 									@update:model-value="
-										itemData.settings.linked_components.report_settings.begin_date =
-											$event
+										itemData.settings.linked_components.report_settings.begin_date = $event
 									"
 								/>
 
@@ -408,9 +327,7 @@
 									rounded
 									:disabled="isLoading"
 									@click.stop.prevent="
-										clearSelect(
-											'settings.linked_components.report_settings.begin_date'
-										)
+										clearSelect('settings.linked_components.report_settings.begin_date')
 									"
 								>
 									Clear
@@ -419,10 +336,7 @@
 
 							<div class="cell">
 								<FmSelect
-									:model-value="
-										itemData.settings.linked_components
-											.report_settings.end_date
-									"
+									:model-value="itemData.settings.linked_components.report_settings.end_date"
 									:options="
 										dateControlComponentsTypes.map((t) => ({
 											title: t.name,
@@ -433,8 +347,7 @@
 									label="Date To"
 									:disabled="isLoading"
 									@update:model-value="
-										itemData.settings.linked_components.report_settings.end_date =
-											$event
+										itemData.settings.linked_components.report_settings.end_date = $event
 									"
 								/>
 
@@ -443,9 +356,7 @@
 									rounded
 									:disabled="isLoading"
 									@click.stop.prevent="
-										clearSelect(
-											'settings.linked_components.report_settings.end_date'
-										)
+										clearSelect('settings.linked_components.report_settings.end_date')
 									"
 								>
 									Clear
@@ -455,10 +366,7 @@
 
 						<div class="cell">
 							<FmSelect
-								:model-value="
-									itemData.settings.linked_components
-										.report_settings.report_currency
-								"
+								:model-value="itemData.settings.linked_components.report_settings.report_currency"
 								:options="
 									currencyControlComponentsTypes.map((t) => ({
 										title: t.name,
@@ -469,8 +377,7 @@
 								label="Currency"
 								:disabled="isLoading"
 								@update:model-value="
-									itemData.settings.linked_components.report_settings.report_currency =
-										$event
+									itemData.settings.linked_components.report_settings.report_currency = $event
 								"
 							/>
 
@@ -479,9 +386,7 @@
 								rounded
 								:disabled="isLoading"
 								@click.stop.prevent="
-									clearSelect(
-										'settings.linked_components.report_settings.report_currency'
-									)
+									clearSelect('settings.linked_components.report_settings.report_currency')
 								"
 							>
 								Clear
@@ -490,24 +395,18 @@
 
 						<div class="cell">
 							<FmSelect
-								:model-value="
-									itemData.settings.linked_components
-										.report_settings.pricing_policy
-								"
+								:model-value="itemData.settings.linked_components.report_settings.pricing_policy"
 								:options="
-									pricingPolicyControlComponentsTypes.map(
-										(t) => ({
-											title: t.name,
-											value: t.user_code
-										})
-									)
+									pricingPolicyControlComponentsTypes.map((t) => ({
+										title: t.name,
+										value: t.user_code
+									}))
 								"
 								variant="outlined"
 								label="Pricing Policy"
 								:disabled="isLoading"
 								@update:model-value="
-									itemData.settings.linked_components.report_settings.pricing_policy =
-										$event
+									itemData.settings.linked_components.report_settings.pricing_policy = $event
 								"
 							/>
 
@@ -516,9 +415,7 @@
 								rounded
 								:disabled="isLoading"
 								@click.stop.prevent="
-									clearSelect(
-										'settings.linked_components.report_settings.pricing_policy'
-									)
+									clearSelect('settings.linked_components.report_settings.pricing_policy')
 								"
 							>
 								Clear
@@ -527,10 +424,7 @@
 
 						<div class="cell">
 							<FmSelect
-								:model-value="
-									itemData.settings.linked_components
-										.report_settings.portfolios
-								"
+								:model-value="itemData.settings.linked_components.report_settings.portfolios"
 								:options="
 									portfoliosComponentTypes.map((t) => ({
 										title: t.name,
@@ -541,8 +435,7 @@
 								label="Portfolios"
 								:disabled="isLoading"
 								@update:model-value="
-									itemData.settings.linked_components.report_settings.portfolios =
-										$event
+									itemData.settings.linked_components.report_settings.portfolios = $event
 								"
 							/>
 
@@ -551,9 +444,7 @@
 								rounded
 								:disabled="isLoading"
 								@click.stop.prevent="
-									clearSelect(
-										'settings.linked_components.report_settings.portfolios'
-									)
+									clearSelect('settings.linked_components.report_settings.portfolios')
 								"
 							>
 								Clear
@@ -562,10 +453,7 @@
 
 						<div class="cell">
 							<FmSelect
-								:model-value="
-									itemData.settings.linked_components
-										.report_settings.accounts
-								"
+								:model-value="itemData.settings.linked_components.report_settings.accounts"
 								:options="
 									accountsComponentTypes.map((t) => ({
 										title: t.name,
@@ -576,8 +464,7 @@
 								label="Accounts"
 								:disabled="isLoading"
 								@update:model-value="
-									itemData.settings.linked_components.report_settings.accounts =
-										$event
+									itemData.settings.linked_components.report_settings.accounts = $event
 								"
 							/>
 
@@ -586,9 +473,7 @@
 								rounded
 								:disabled="isLoading"
 								@click.stop.prevent="
-									clearSelect(
-										'settings.linked_components.report_settings.accounts'
-									)
+									clearSelect('settings.linked_components.report_settings.accounts')
 								"
 							>
 								Clear
@@ -597,10 +482,7 @@
 
 						<div class="cell">
 							<FmSelect
-								:model-value="
-									itemData.settings.linked_components
-										.report_settings.strategies1
-								"
+								:model-value="itemData.settings.linked_components.report_settings.strategies1"
 								:options="
 									strategies1ComponentTypes.map((t) => ({
 										title: t.name,
@@ -611,8 +493,7 @@
 								label="Strategies 1"
 								:disabled="isLoading"
 								@update:model-value="
-									itemData.settings.linked_components.report_settings.strategies1 =
-										$event
+									itemData.settings.linked_components.report_settings.strategies1 = $event
 								"
 							/>
 
@@ -621,9 +502,7 @@
 								rounded
 								:disabled="isLoading"
 								@click.stop.prevent="
-									clearSelect(
-										'settings.linked_components.report_settings.strategies1'
-									)
+									clearSelect('settings.linked_components.report_settings.strategies1')
 								"
 							>
 								Clear
@@ -632,10 +511,7 @@
 
 						<div class="cell">
 							<FmSelect
-								:model-value="
-									itemData.settings.linked_components
-										.report_settings.strategies2
-								"
+								:model-value="itemData.settings.linked_components.report_settings.strategies2"
 								:options="
 									strategies2ComponentTypes.map((t) => ({
 										title: t.name,
@@ -646,8 +522,7 @@
 								label="Strategies 2"
 								:disabled="isLoading"
 								@update:model-value="
-									itemData.settings.linked_components.report_settings.strategies2 =
-										$event
+									itemData.settings.linked_components.report_settings.strategies2 = $event
 								"
 							/>
 
@@ -656,9 +531,7 @@
 								rounded
 								:disabled="isLoading"
 								@click.stop.prevent="
-									clearSelect(
-										'settings.linked_components.report_settings.strategies2'
-									)
+									clearSelect('settings.linked_components.report_settings.strategies2')
 								"
 							>
 								Clear
@@ -667,10 +540,7 @@
 
 						<div class="cell">
 							<FmSelect
-								:model-value="
-									itemData.settings.linked_components
-										.report_settings.strategies3
-								"
+								:model-value="itemData.settings.linked_components.report_settings.strategies3"
 								:options="
 									strategies3ComponentTypes.map((t) => ({
 										title: t.name,
@@ -681,8 +551,7 @@
 								label="Strategies 3"
 								:disabled="isLoading"
 								@update:model-value="
-									itemData.settings.linked_components.report_settings.strategies3 =
-										$event
+									itemData.settings.linked_components.report_settings.strategies3 = $event
 								"
 							/>
 
@@ -691,9 +560,7 @@
 								rounded
 								:disabled="isLoading"
 								@click.stop.prevent="
-									clearSelect(
-										'settings.linked_components.report_settings.strategies1'
-									)
+									clearSelect('settings.linked_components.report_settings.strategies1')
 								"
 							>
 								Clear
@@ -713,13 +580,7 @@
 		</div>
 
 		<div class="actions">
-			<FmButton
-				type="secondary"
-				rounded
-				@click.stop.prevent="emits('close')"
-			>
-				Cancel
-			</FmButton>
+			<FmButton type="secondary" rounded @click.stop.prevent="emits('close')"> Cancel </FmButton>
 
 			<div class="actions__block">
 				<FmButton
@@ -740,14 +601,7 @@
 	import cloneDeep from 'lodash/cloneDeep';
 	import size from 'lodash/size';
 	import unset from 'lodash/unset';
-	import {
-		FM_DIALOGS_KEY,
-		FmButton,
-		FmCheckbox,
-		FmSelect,
-		FmTabs,
-		FmTextField
-	} from '@finmars/ui';
+	import { FM_DIALOGS_KEY, FmButton, FmCheckbox, FmSelect, FmTabs, FmTextField } from '@finmars/ui';
 	import useAceEditor from '~/composables/useAceEditor';
 	import {
 		SUBTOTAL_FORMULA_OPTIONS,
@@ -808,9 +662,7 @@
 	const componentsTypesToListen = ref([]);
 	const attributes = ref([]);
 
-	const numericAttributes = computed(() =>
-		attributes.value.filter((a) => a.value_type === 20)
-	);
+	const numericAttributes = computed(() => attributes.value.filter((a) => a.value_type === 20));
 	const reportOptions = computed(() =>
 		wrapperStringify(itemData.value.settings.default_report_options)
 	);
@@ -920,18 +772,15 @@
 		}
 
 		componentsTypes.value = cloneDeep(components.value);
-		componentsTypesToListen.value = componentsTypes.value.reduce(
-			(res, c) => {
-				if (c.user_code) {
-					res.push({
-						id: c.user_code,
-						name: c.name
-					});
-				}
-				return res;
-			},
-			[]
-		);
+		componentsTypesToListen.value = componentsTypes.value.reduce((res, c) => {
+			if (c.user_code) {
+				res.push({
+					id: c.user_code,
+					name: c.name
+				});
+			}
+			return res;
+		}, []);
 		componentsForMultiselector.value = cloneDeep(
 			getComponentsForMultiselector(itemData.value.user_code)
 		);

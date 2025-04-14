@@ -1,19 +1,23 @@
-import { getUser, getMasterUser, getMember } from '~/services/globalService';
+import useGlobalStore from '~/stores/useStore';
 
 function getPropertyForStoring() {
+	const globalStore = useGlobalStore();
 	const errorsList = [];
 
-	const user = getUser();
+	const user = globalStore.user;
 	if (!user) {
 		errorsList.push(new Error('No user set'));
 	}
 
-	const masterUser = getMasterUser();
+	const masterUser = globalStore.masterUsers.find(
+		(user) =>
+			user.space_code === globalStore.space_code && user.realm_code === globalStore.realm_code
+	);
 	if (!masterUser) {
 		errorsList.push(new Error('No masterUser set'));
 	}
 
-	const member = getMember();
+	const member = globalStore.member;
 	if (!member) {
 		errorsList.push(new Error('No member set'));
 	}
@@ -113,11 +117,7 @@ export function removeFromCache(objPath, cache) {
 }
 
 export function cacheDefaultLayout(layout) {
-	const defLayoutDataPath = [
-		'layouts',
-		'defaultLayouts',
-		layout.content_type
-	];
+	const defLayoutDataPath = ['layouts', 'defaultLayouts', layout.content_type];
 	const cachedLayoutsList = ['layouts', 'layoutsList'];
 	const layoutPath = ['layouts', 'layoutsList', layout.id];
 
@@ -162,11 +162,7 @@ export function getDefaultLayout(contentType) {
 }
 
 export function cacheAutosaveLayout(layout) {
-	const autosaveLayoutPath = [
-		'layouts',
-		'autosaveLayouts',
-		layout.content_type
-	];
+	const autosaveLayoutPath = ['layouts', 'autosaveLayouts', layout.content_type];
 	const layoutPath = ['layouts', 'layoutsList', layout.id];
 
 	const autosaveLayoutData = {
@@ -225,21 +221,13 @@ export function deleteLayoutFromCache(layoutId) {
 
 	if (layoutToDelete && layoutToDelete.is_default) {
 		// clear default layout for content_type
-		const defLayoutPath = [
-			'layouts',
-			'defaultLayouts',
-			layoutToDelete.content_type
-		];
+		const defLayoutPath = ['layouts', 'defaultLayouts', layoutToDelete.content_type];
 		cache = removeFromCache(defLayoutPath, cache);
 	}
 
 	if (layoutToDelete && layoutToDelete.user_code.endsWith(':autosave')) {
 		// clear autosave layout for content_type
-		const asLayoutPath = [
-			'layouts',
-			'autosaveLayouts',
-			layoutToDelete.content_type
-		];
+		const asLayoutPath = ['layouts', 'autosaveLayouts', layoutToDelete.content_type];
 		cache = removeFromCache(asLayoutPath, cache);
 	}
 
@@ -276,11 +264,7 @@ export function getReportDataForLayout(contentType, layoutUserCode) {
 	return {};
 }
 
-export function cacheReportDataForLayout(
-	contentType,
-	layoutUserCode,
-	reportData
-) {
+export function cacheReportDataForLayout(contentType, layoutUserCode, reportData) {
 	const reportsData = getReportData();
 
 	if (!reportsData[contentType]) {

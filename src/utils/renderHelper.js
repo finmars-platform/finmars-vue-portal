@@ -26,10 +26,7 @@ export function getColorNegativeNumber(value, column) {
 	}
 
 	// check whether number is float or integer
-	if (
-		(value % 1 === 0 && parseInt(value) < 0) ||
-		(value % 1 !== 0 && parseFloat(value) < 0)
-	) {
+	if ((value % 1 === 0 && parseInt(value) < 0) || (value % 1 !== 0 && parseFloat(value) < 0)) {
 		return 'var(--error)';
 	}
 
@@ -44,9 +41,7 @@ export function formatRounding(value, column) {
 	}
 
 	const fractionDigits = [0, 0, 1, 2, 4][numberFormat.round_format_id];
-	return fractionDigits === undefined
-		? `${value}`
-		: parseFloat(value).toFixed(fractionDigits);
+	return fractionDigits === undefined ? `${value}` : parseFloat(value).toFixed(fractionDigits);
 }
 
 export function formatZero(value, column) {
@@ -129,16 +124,13 @@ export function formatPercentage(value, column, applySuffix) {
 	let result = value;
 
 	if (numberFormat) {
-		const { number_multiplier, percentage_format_id, number_suffix } =
-			numberFormat;
+		const { number_multiplier, percentage_format_id, number_suffix } = numberFormat;
 		if (number_multiplier || number_multiplier === 0) {
 			result = parseFloat(result) * number_multiplier;
 		}
 
 		result = [undefined, 0, 1, 2, 0, 1][percentage_format_id]
-			? parseFloat(result).toFixed(
-					[undefined, 0, 1, 2, 0, 1][percentage_format_id]
-				)
+			? parseFloat(result).toFixed([undefined, 0, 1, 2, 0, 1][percentage_format_id])
 			: result;
 
 		if (applySuffix && number_suffix) {

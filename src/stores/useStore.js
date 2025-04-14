@@ -34,12 +34,8 @@ export default defineStore({
 
 			if (pathname.includes('/space')) {
 				const pathnamePartsList = pathname.split('/');
-				const realm_code = pathnamePartsList.find((part) =>
-					part.startsWith('realm')
-				);
-				const space_code = pathnamePartsList.find((part) =>
-					part.startsWith('space')
-				);
+				const realm_code = pathnamePartsList.find((part) => part.startsWith('realm'));
+				const space_code = pathnamePartsList.find((part) => part.startsWith('space'));
 
 				this.realm_code = realm_code;
 				this.space_code = space_code;
@@ -80,8 +76,8 @@ export default defineStore({
 				}
 
 				this.defaultConfigCode =
-					this.configCodes.find((conf) => conf.is_primary)
-						?.configuration_code || this.configCodes?.[0]?.configuration_code;
+					this.configCodes.find((conf) => conf.is_primary)?.configuration_code ||
+					this.configCodes?.[0]?.configuration_code;
 			}
 
 			window.onerror = this.registerSysError;
@@ -132,10 +128,7 @@ export default defineStore({
 				//
 				// reader.readAsText(blob);
 			} catch (error) {
-				console.error(
-					'[portalController loadTheme] Could not fetch theme',
-					error
-				);
+				console.error('[portalController loadTheme] Could not fetch theme', error);
 			}
 		},
 
@@ -155,7 +148,7 @@ export default defineStore({
 					const pathParts = urlPath.split('/');
 					return {
 						realmCode: pathParts[1] || 'unknown_realm',
-						spaceCode: pathParts[2] || 'unknown_space',
+						spaceCode: pathParts[2] || 'unknown_space'
 					};
 				};
 
@@ -203,10 +196,7 @@ export default defineStore({
 			const res = await Promise.all([memberProm, memberLayoutProm]);
 
 			if (res[0]._$error || res[1]._$error) {
-				console.error(
-					'Error while fetching data of member:',
-					res[0]._$error || res[1]._$error
-				);
+				console.error('Error while fetching data of member:', res[0]._$error || res[1]._$error);
 			} else {
 				let member = res[0];
 
@@ -321,8 +311,7 @@ export default defineStore({
 			}
 
 			const viewerType = isReport ? 'report_viewer' : 'entity_viewer';
-			let entityTypesSettings =
-				this.member.data.group_tables[viewerType].entity_viewers_settings;
+			let entityTypesSettings = this.member.data.group_tables[viewerType].entity_viewers_settings;
 
 			if (!entityTypesSettings[entityType]) {
 				entityTypesSettings[entityType] = {
@@ -340,9 +329,7 @@ export default defineStore({
 
 			member.data.group_tables[viewerType].entity_viewers_settings[entityType] = settings; */
 
-			this.member.data.group_tables[viewerType].entity_viewers_settings[
-				entityType
-			] = settings;
+			this.member.data.group_tables[viewerType].entity_viewers_settings[entityType] = settings;
 		}
 	},
 	getters: {
@@ -351,18 +338,20 @@ export default defineStore({
 				const viewerType = isReport ? 'report_viewer' : 'entity_viewer';
 				// let member = setUpMemberData(state.member, viewerType, entityType);
 
-				return state.member.data.group_tables[viewerType]
-					.entity_viewers_settings[entityType];
+				return state.member.data.group_tables[viewerType].entity_viewers_settings[entityType];
 			};
 		},
 		favorites(state) {
-			return state.memberLayout.data.favorites;
+			return state.memberLayout?.data?.favorites;
 		},
 		isUrlValid(state) {
 			return state.realm_code && state.space_code;
 		},
 		darkModeActive(state) {
 			return state.user.data?.dark_mode;
+		},
+		defaultConfigurationCode(state) {
+			return `local.poms.${state.current.base_api_url}`;
 		}
 	}
 });
