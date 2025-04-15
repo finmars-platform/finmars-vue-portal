@@ -6,42 +6,48 @@
 			<div class="flex flex-col gap-4">
 				<span><i class="font-bold whitespace-nowrap">Date range:</i></span>
 				<div class="grid grid-cols-2 gap-4">
-					<FmMenu>
-						<template #btn>
-							<FmTextField
-								v-model="dateRange.date_from"
-								@update:model-value="setDatesDebounce('from', $event)"
-								label="Start date"
-								clearable
-								outlined
-							></FmTextField>
-						</template>
-						<template #default>
-							<FmDatePicker
-								v-model="dateRange.date_from"
-								@update:model-value="setDatesDebounce('from', $event)"
-								:canWeekendsBeSelected="true"
-							/>
-						</template>
-					</FmMenu>
-					<FmMenu>
-						<template #btn>
-							<FmTextField
-								v-model="dateRange.date_to"
-								@update:model-value="setDatesDebounce('to', $event)"
-								label="End date"
-								clearable
-								outlined
-							></FmTextField>
-						</template>
-						<template #default>
-							<FmDatePicker
-								v-model="dateRange.date_to"
-								@update:model-value="setDatesDebounce('to', $event)"
-								:canWeekendsBeSelected="true"
-							/>
-						</template>
-					</FmMenu>
+					<div class="menu-input-wrapper">
+						<FmMenu class="w-full">
+							<template #btn>
+								<FmTextField
+									v-model="dateRange.date_from"
+									@update:model-value="setDatesDebounce('from', $event)"
+									:hideDetails="true"
+									label="Start date"
+									clearable
+									outlined
+								></FmTextField>
+							</template>
+							<template #default>
+								<FmDatePicker
+									v-model="dateRange.date_from"
+									@update:model-value="setDatesDebounce('from', $event)"
+									:canWeekendsBeSelected="true"
+								/>
+							</template>
+						</FmMenu>
+					</div>
+					<div class="menu-input-wrapper">
+						<FmMenu class="w-full">
+							<template #btn>
+								<FmTextField
+									v-model="dateRange.date_to"
+									@update:model-value="setDatesDebounce('to', $event)"
+									:hideDetails="true"
+									label="End date"
+									clearable
+									outlined
+								></FmTextField>
+							</template>
+							<template #default>
+								<FmDatePicker
+									v-model="dateRange.date_to"
+									@update:model-value="setDatesDebounce('to', $event)"
+									:canWeekendsBeSelected="true"
+								/>
+							</template>
+						</FmMenu>
+					</div>
 				</div>
 			</div>
 			<div class="flex flex-col gap-4">
@@ -298,6 +304,10 @@
 			border: 1px solid var(--border-color);
 			border-radius: var(--spacing-16);
 			padding: var(--spacing-16) var(--spacing-48);
+		}
+
+		.menu-input-wrapper {
+			max-width: 352px;
 		}
 
 		.rec-dates-wrapper {
