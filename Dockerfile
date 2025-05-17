@@ -9,7 +9,7 @@ COPY . .
 
 RUN npm run build
 
-EXPOSE 3000
+EXPOSE 8080
 
 # CMD [ "npm", "start" ]
 RUN chmod +x /var/www/finmars/docker/substitute_environment_variables.sh
