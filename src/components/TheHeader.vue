@@ -92,14 +92,34 @@
 	}
 
 	function toggleTheme(val) {
+
+		console.log('val', val);
+
 		if (val !== undefined) {
 			toggleIsDark.value = val;
 			store.user.data.dark_mode = toggleIsDark.value;
+
+			if (store.user.data.dark_mode) {
+				localStorage.setItem("isDarkMode", "true")
+			} else {
+				localStorage.setItem("isDarkMode", "false")
+			}
+
 		} else {
 			store.user.data.dark_mode = !store?.user?.data?.dark_mode;
+
+			console.log('store.user.data.dark_mode', store.user.data.dark_mode);
+
+			if (store.user.data.dark_mode) {
+				localStorage.setItem("isDarkMode", "true")
+			} else {
+				localStorage.setItem("isDarkMode", "false")
+			}
 		}
 
-		updateUser();
+
+
+		// updateUser();
 	}
 
 	const updateUser = function () {
