@@ -50,9 +50,13 @@
 
 	loadThemeSettingsDefault();
 
+
+
 	watch(
 		() => store.user?.data?.dark_mode,
 		() => {
+			store.user.data.dark_mode = JSON.parse(localStorage.getItem("isDarkMode")) || false;
+
 			useToggleDarkMode(store.user.data.dark_mode);
 		}
 	);

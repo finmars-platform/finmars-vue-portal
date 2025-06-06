@@ -19,7 +19,8 @@ export default defineNuxtConfig({
 			KEYCLOAK_CLIENT_ID:
 				process.env.KEYCLOAK_CLIENT_ID || '==PROD_KEYCLOAK_CLIENT_ID==',
 
-			buildDATE: dayjs().format('HH:mm DD/MM/YYYY')
+			buildDATE: dayjs().format('HH:mm DD/MM/YYYY'),
+			EDITION_TYPE: process.env.EDITION_TYPE || 'enterprise'
 		}
 	},
 	ssr: false,
