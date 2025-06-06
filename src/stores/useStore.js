@@ -28,7 +28,6 @@ export default defineStore({
 			});
 		},
 		async init() {
-			this.getUser();
 
 			const pathname = window.location.pathname;
 
@@ -49,6 +48,10 @@ export default defineStore({
 				// throw new Error("useStore.init: no space_code in the pathname" + pathname);
 			}
 
+			this.getUser();
+
+
+
 			await Promise.all([this.getMasterUsers(), this.getRealms()]);
 
 			if (this.current) {
@@ -57,7 +60,42 @@ export default defineStore({
 			}
 		},
 		async getMasterUsers() {
-			let res = await useApi('masterUser.get');
+
+			let config = useRuntimeConfig().public;
+
+			let res;
+			if (config.EDITION_TYPE == 'enterprise') {
+
+				res = await useApi('masterUser.get');
+			} else {
+				res = {
+					results: [
+						{
+							"id": 1,
+							"name": "Local",
+							"description": "Local Space",
+							"status": 1,
+							"timezone": "UTC",
+							"is_initialized": true,
+							"base_api_url": "space00000",
+							"realm": 1,
+							"realm_object": {
+								"id": 1,
+								"name": "Local Realm",
+								"realm_code": "realm00000",
+								"update_channel": "rc",
+								"is_update_allowed": true,
+								"status": "operational"
+							},
+							"space_code": "space00000",
+							"realm_code": "realm00000",
+							"is_update_available": true,
+							"is_admin": true,
+							"is_owner": true
+						}
+					]
+				}
+			}
 
 			if (res._$error) return;
 
@@ -87,7 +125,18 @@ export default defineStore({
 			window.onerror = this.registerSysError;
 		},
 		async getRealms() {
-			let res = await useApi('realm.get');
+
+			let config = useRuntimeConfig().public;
+
+			let res;
+			if (config.EDITION_TYPE == 'enterprise') {
+				res = await useApi('realm.get');
+
+			} else {
+				res = {
+					results: [{name: "Realm Local", "realm_code": "realm00000"}]
+				}
+			}
 
 			if (res.error) return;
 
@@ -140,7 +189,18 @@ export default defineStore({
 		},
 
 		async getUser() {
-			let res = await useApi('me.get');
+			let res;
+
+			let config = useRuntimeConfig().public;
+
+			console.log('config', config);
+
+			if (config.EDITION_TYPE == 'enterprise') {
+				res = await useApi('me.get');
+			} else if (config.EDITION_TYPE == 'community') {
+				const memberProm = await useApi('member.get', { params: { id: 0 } });
+				res = memberProm.user
+			}
 
 			if (res._$error) {
 				throw res._$error;
