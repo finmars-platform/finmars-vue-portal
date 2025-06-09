@@ -5,7 +5,18 @@ WORKDIR /var/www/finmars
 
 COPY package*.json ./
 RUN npm i
-COPY . .
+
+COPY src ./src
+COPY docker ./docker
+COPY tailwind ./tailwind
+COPY tests ./tests
+COPY package.json .
+COPY package-lock.json .
+COPY nuxt.config.ts .
+COPY tailwind.config.js .
+COPY tsconfig.json .
+COPY vitest.config.ts .
+
 
 RUN npm run build
 
