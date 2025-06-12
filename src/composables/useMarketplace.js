@@ -5,6 +5,7 @@ import cloneDeep from 'lodash/cloneDeep';
 
 export function useMarketplace() {
 	const { configCodes } = storeToRefs(useStore());
+	const store = useStore();
 	const items = ref([]);
 	const readyStatus = reactive({ data: false });
 	const filters = reactive({});
@@ -12,7 +13,7 @@ export function useMarketplace() {
 	const totalPages = ref(1);
 	const currentPage = ref(1);
 	const activeTaskId = ref(null);
-	const pageSize = ref(40);
+	const pageSize = ref(9);
 	const isShowModules = ref(false);
 
 	const pages = ref([]);
@@ -124,7 +125,7 @@ export function useMarketplace() {
 		}
 
 		const payload = {
-			pageSize: pageSize.value,
+			page_size: pageSize.value,
 			page: currentPage.value,
 			ordering: 'name',
 			...filters
@@ -132,7 +133,10 @@ export function useMarketplace() {
 
 		try {
 			const data = await useApi('marketplaceList.get', {
-				filters: payload
+				filters: payload,
+				headers: {
+					'X-License': store.ecosystemDefaults.license_key
+				}
 			});
 
 			if (data) {
