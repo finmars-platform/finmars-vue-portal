@@ -77,7 +77,7 @@
 									class="select"
 								/>
 
-								<div v-if="!matchItem.localItem">
+								<div v-if="!matchItem.localItem && matchItem.is_allowed_to_install">
 									<FmBtn
 										type="primary"
 										class="open"
@@ -210,6 +210,7 @@
 
 	const route = useRoute();
 	const router = useRouter();
+	const store = useStore();
 
 	const {
 		installConfiguration,
@@ -242,7 +243,10 @@
 	async function getData() {
 		try {
 			item.value = await useApi('marketplaceItem.get', {
-				params: { id: route?.params?.id }
+				params: { id: route?.params?.id },
+				headers: {
+					'X-License': store.ecosystemDefaults.license_key
+				}
 			});
 
 			readyStatus.data = true;
@@ -271,7 +275,10 @@
 
 		try {
 			const data = await useApi('marketplaceItemVersion.get', {
-				filters: payload
+				filters: payload,
+				headers: {
+					'X-License': store.ecosystemDefaults.license_key
+				}
 			});
 			versions.value = data.results;
 
