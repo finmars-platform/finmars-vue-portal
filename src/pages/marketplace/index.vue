@@ -37,7 +37,6 @@
 				v-for="item in matchItems"
 				:key="item"
 				class="card"
-				@click="openCard(item.id)"
 			>
 				<div class="row top">
 					<div class="image">
@@ -61,16 +60,43 @@
 						<div class="version">
 							version:&nbsp;<b>{{ item.latest_release_object?.version }}</b>
 						</div>
+						<div class="license">
+							license:&nbsp;<b>{{ item.license }}</b>
+						</div>
+
+
 					</div>
 				</div>
 
-				<div v-if="!item.localItem">
+				<div class="configuration-short-description"><p>{{item.short_description}}</p></div>
+
+				<div class="org-badge-row">
+					<span class="org-name" v-if="!item.organization_object.website">By <i>{{ item.organization_object.name }}</i></span>
+					<span class="org-name" v-if="item.organization_object.website">By <i><a v-bind:href="item.organization_object.website" target="_blank">{{ item.organization_object.name }}</a></i></span>
+					<span
+						class="tier-badge"
+						:class="item.pricing_tier === 'paid' ? 'paid' : 'free'"
+					>
+    {{ item.pricing_tier === 'paid' ? 'Paid' : 'Free' }}
+  </span>
+				</div>
+
+				<div v-if="!item.localItem && item.is_allowed_to_install">
 					<FmBtn
 						type="primary"
 						class="open"
 						@click.prevent.stop="installConfiguration(item)"
 					>
 						Install
+					</FmBtn>
+				</div>
+
+				<div v-if="!item.localItem && !item.is_allowed_to_install">
+					<FmBtn
+						type="primary"
+						class="open disabled-btn"
+					>
+						License Required
 					</FmBtn>
 				</div>
 
@@ -105,6 +131,12 @@
 						</FmBtn>
 					</div>
 				</div>
+
+
+				<div @click="openCard(item.id)" class="show-details-button">
+					Show Details
+				</div>
+
 			</FmCard>
 		</div>
 		<div v-else style="width: 100%" class="row">
@@ -210,15 +242,15 @@
 		}
 
 		.card {
-			max-width: 240px;
-			width: 240px;
-			min-height: 160px;
-			padding: 16px 16px 46px;
+			aspect-ratio: 3 / 2;    /* width-to-height ratio */
+			height: auto;           /* height follows the ratio */
+			width: 100%;
+			//padding: 16px 16px 46px;
 			border: 1px solid var(--table-border-color);
 			margin: 1px;
 			position: relative;
 			box-shadow: none;
-			cursor: pointer;
+			//cursor: pointer;
 			background: var(--card-background-color);
 			color: var(--secondary-color);
 			display: flex;
@@ -226,55 +258,75 @@
 			border-radius: 2px;
 			transition: opacity 0.2s;
 
-			&:hover {
-				opacity: 0.8;
-			}
+			//&:hover {
+			//	opacity: 0.8;
+			//}
 
 			.image {
-				padding-right: 8px;
+				padding-right: 16px;
 
 				img {
-					height: 40px;
-					width: 40px;
-					min-width: 40px;
+					height: 80px;
+					width: 80px;
+					min-width: 80px;
 					border-radius: 50%;
 				}
 
 				.no-thumbnail {
-					height: 40px;
-					width: 40px;
+					height: 80px;
+					width: 80px;
 					background: var(--primary-color);
 					border-radius: 50%;
 					text-align: center;
 					color: #fff;
-					line-height: 40px;
+					line-height: 80px;
+					font-size: 2em;
 				}
 			}
 
+			a {
+				display: inline;
+			}
+
 			.name {
-				font-size: 14px;
+				font-size: 24px;
 			}
 
 			.code {
-				font-size: 11px;
+				font-size: 14px;
 			}
 
 			.version {
-				font-size: 11px;
+				font-size: 14px;
+			}
+
+			.show-details-button {
+				cursor: pointer;
+				text-decoration: underline;
+				font-size: 14px;
+				position: absolute;
+				bottom: 20px;
+				left: 18px;
+				&:hover {
+					opacity: .8;
+				}
 			}
 
 			.open {
 				background: var(--primary-color);
-				font-size: 14px;
+				font-size: 18px;
 				position: absolute;
-				bottom: 16px;
+				bottom: 32px;
 				margin: 0;
-				height: 24px;
 				min-height: 24px;
 				line-height: 24px;
-				width: 90px;
-				left: 50%;
-				margin-left: -45px;
+				min-width: 120px;
+				right: 16px;
+
+				&.disabled-btn {
+					pointer-events: none;
+					opacity: .7;
+				}
 			}
 
 			.current {
@@ -287,10 +339,56 @@
 		}
 
 		.list {
-			gap: 8px;
 			display: grid;
-			grid-template-columns: repeat(auto-fill, 240px);
-			align-items: stretch;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 8px;
+			justify-items: center;
+		}
+
+		.configuration-short-description {
+			margin: 8px 0 8px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-height: 80px;
+		}
+
+		.org-badge-row {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 4px;
+			margin-top: 8px;
+		}
+
+		.org-name {
+			font-size: 14px;
+			color: var(--secondary-color);
+			text-decoration: underline;
+			&:hover {
+				opacity: .8;
+			}
+		}
+
+		.tier-badge {
+			font-size: 10px;
+			width: 64px;
+			text-align: center;
+			padding: 2px 6px;
+			border-radius: 4px;
+			text-transform: uppercase;
+			position: absolute;
+			bottom: 8px;
+			right: 44px;
+		}
+
+		.tier-badge.free {
+			background: darkseagreen;
+			color: #006064;
+		}
+
+		.tier-badge.paid {
+			background: darksalmon;
+			color: #c62828;
 		}
 
 		.button {

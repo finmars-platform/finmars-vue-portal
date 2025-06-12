@@ -148,6 +148,19 @@
 							:items="''"
 						/>-->
 		</div>
+
+
+		<div>
+
+			<p>Finmars License Key is Optional</p>
+			<p>To obtain your License Key you need to have <a href="https://id-auth.finmars.io/realms/finmars/account" target="_blank" style="text-decoration: underline; display: inline">Finmars ID</a></p>
+			<p>With Finmars ID you will able to receive License Key <a href="https://license.finmars.com/account/" target="_blank" style="text-decoration: underline; display: inline">here</a></p>
+
+			<p>License Key Extends Finmars Marketplace, with that key you will be able to download paid modules</p>
+
+			<fm-text-field v-model="ecosystemDefaultsRef.license_key" label="License Key" outlined  style="margin-top: 16px;"/>
+		</div>
+
 		<FmBtn
 			type="primary"
 			class="g-toggle-filters-btn"
