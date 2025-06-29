@@ -20,6 +20,9 @@ COPY vitest.config.ts .
 
 RUN npm run build
 
+# CMD [ "npm", "start" ]
+RUN chmod +x /var/www/finmars/docker/substitute_environment_variables.sh
+
 # Node and npm use a non-root user provided by the base Node image
 # Creating a new user "finmars" for running the application
 RUN adduser -D finmars
@@ -29,8 +32,6 @@ USER finmars
 
 EXPOSE 8080
 
-# CMD [ "npm", "start" ]
-RUN chmod +x /var/www/finmars/docker/substitute_environment_variables.sh
 ENTRYPOINT ["/var/www/finmars/docker/substitute_environment_variables.sh"]
 
 # RUN npm run test
