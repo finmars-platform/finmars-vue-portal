@@ -1,4 +1,4 @@
-FROM node:18.20.2
+FROM node:22-alpine
 
 RUN mkdir -p /var/www/finmars
 WORKDIR /var/www/finmars
@@ -19,6 +19,13 @@ COPY vitest.config.ts .
 
 
 RUN npm run build
+
+# Node and npm use a non-root user provided by the base Node image
+# Creating a new user "finmars" for running the application
+RUN adduser -D finmars
+
+# Change to non-root privilege
+USER finmars
 
 EXPOSE 8080
 
