@@ -17,12 +17,12 @@
 		"@nuxt/test-utils": "^3.12.1",
 		"@nuxtjs/tailwindcss": "^6.12.1",
 		"@types/sanitize-html": "^2.13.0",
-		"@vitest/coverage-v8": "^1.5.0",
+		"@vitest/coverage-v8": "3.2.4",
 		"@vue/test-utils": "^2.4.5",
 		"consola": "^3.2.0",
 		"eslint": "^8.24.0",
 		"eslint-plugin-vue": "^9.6.0",
-		"happy-dom": "^14.12.3",
+		"happy-dom": "^17.0.0",
 		"nuxt": "^3.11.0",
 		"postcss-mixins": "^10.0.1",
 		"prettier": "3.3.3",
@@ -30,7 +30,7 @@
 		"unplugin-auto-import": "^0.16.6",
 		"unplugin-vue-components": "^0.25.1",
 		"vite-plugin-commonjs": "^0.10.1",
-		"vitest": "^1.5.0"
+		"vitest": "3.2.4"
 	},
 	"dependencies": {
 		"@chenfengyuan/vue-qrcode": "^2.0.0",
@@ -43,7 +43,7 @@
 		"chart.js": "^3.9.1",
 		"click-outside-vue3": "^4.0.1",
 		"dayjs": "^1.11.7",
-		"esbuild": "^0.23.0",
+		"esbuild": "^0.25.5",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-prettier": "^5.2.1",
 		"floating-vue": "^5.2.2",
