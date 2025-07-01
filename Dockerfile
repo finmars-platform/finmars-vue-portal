@@ -27,6 +27,9 @@ RUN chmod +x /var/www/finmars/docker/substitute_environment_variables.sh
 # Creating a new user "finmars" for running the application
 RUN adduser -D finmars
 
+RUN chown -R finmars:finmars /var/www/finmars/.output && chown -R finmars:finmars /var/www/finmars/.nuxt
+
+
 # Change to non-root privilege
 USER finmars
 
