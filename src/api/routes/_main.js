@@ -615,7 +615,7 @@ export default {
 	},
 	task: {
 		get: prefix + '/tasks/task/{id}/',
-		put: prefix + '/tasks/task/{id}/cancel'
+		put: prefix + '/tasks/task/{id}/cancel/'
 	},
 	taskTransaction: {
 		put: prefix + '/tasks/task/{id}/abort-transaction-import'
