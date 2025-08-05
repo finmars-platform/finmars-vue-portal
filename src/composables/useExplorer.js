@@ -1,13 +1,13 @@
 import {
-	isEditorFile,
-	getCurrentUrl,
-	getRealmSpaceCodes,
-	downloadFile,
-	getItemsForAction,
+	buildFileBlob,
 	copyToBuffer,
+	downloadFile,
+	getCurrentUrl,
 	getFileExtension,
+	getItemsForAction,
 	getMimeType,
-	buildFileBlob
+	getRealmSpaceCodes,
+	isEditorFile
 } from '~/pages/explorer/helper';
 
 export function useExplorer() {
@@ -333,10 +333,9 @@ export function useExplorer() {
 
 	function openRename(item = undefined) {
 		if (!item) {
-			currentPath.value[currentPath.value.length - 1] = currentPath.value[currentPath.value.length - 1]?.replace(
-				/%20/g,
-				' '
-			);
+			currentPath.value[currentPath.value.length - 1] = currentPath.value[
+				currentPath.value.length - 1
+			]?.replace(/%20/g, ' ');
 			item = {
 				name: '',
 				file_path: currentPath.value.join('/')
@@ -443,7 +442,8 @@ export function useExplorer() {
 				isEditor.value = true;
 			}
 			editorFile.value = fileEditor;
-			if(currentPath.value[0] !== 'explorer') currentPath.value.unshift('explorer');
+			if (currentPath.value[0] !== 'explorer')
+				currentPath.value.unshift('explorer');
 			const newUrl = getCurrentUrl(currentPath.value.join('/'), route);
 			cancel();
 			router.push(newUrl.pathname);
@@ -830,7 +830,10 @@ export function useExplorer() {
 	}
 
 	async function rename() {
-		if (!oldItem.value.name.endsWith('.ipynb') && teValue.value.endsWith('.ipynb')) {
+		if (
+			!oldItem.value.name.endsWith('.ipynb') &&
+			teValue.value.endsWith('.ipynb')
+		) {
 			useNotify({
 				type: 'error',
 				title: `Not allowed change non Jupiter file to '.ipynb'`,
@@ -915,6 +918,24 @@ export function useExplorer() {
 		} else {
 			useNotify({ type: 'error', title: 'Copy Filed' });
 		}
+	}
+
+	function preview(item) {
+		const { realmCode, spaceCode } = getRealmSpaceCodes(route);
+		let url =
+			window.location.origin +
+			'/' +
+			`${realmCode}/${spaceCode}/api/storage` +
+			item.file_path;
+
+		if (!item.file_path.startsWith('/')) {
+			url =
+				window.location.origin +
+				'/' +
+				`${realmCode}/${spaceCode}/api/storage/` +
+				item.file_path;
+		}
+		window.open(url, '_blank');
 	}
 
 	async function download(item = undefined) {
@@ -1133,6 +1154,7 @@ export function useExplorer() {
 		openInNewTab,
 		copyLink,
 		copyFilePath,
+		preview,
 		download,
 		openMove,
 		isMove,
