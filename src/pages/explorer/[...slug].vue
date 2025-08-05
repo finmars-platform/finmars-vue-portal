@@ -405,6 +405,10 @@
 														>Open In New Tab</span
 													>
 													<span
+														@click="preview(item)"
+													>Preview</span
+													>
+													<span
 														@click="copyLink(item)"
 														>Copy Link</span
 													>
@@ -659,6 +663,7 @@
 		openInNewTab,
 		copyLink,
 		copyFilePath,
+		preview,
 		download,
 		openMove,
 		isMove,
