@@ -79,12 +79,7 @@
 									configuration.value.manifest.settings.ui
 										.url_type === 'relative_url'
 								) {
-
 									let origin = window.location.origin;
-
-									if (origin.indexOf(':3000')) {
-										origin = 'http://0.0.0.0:8000';
-									}
 
 									configurationUrl.value =
 										origin +
