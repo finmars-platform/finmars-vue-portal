@@ -73,9 +73,9 @@ let {data: invites, refresh: refreshInvites} = await useAsyncData(
 
 let isShowNewBackup = ref(false)
 
-import formbricks from "@/services/formbricks";
-
-await formbricks.registerRouteChange();
+// import formbricks from "@/services/formbricks";
+//
+// await formbricks.registerRouteChange();
 
 </script>
 

@@ -19,6 +19,8 @@
 
 <script setup>
 	import { useNavigationRoutes } from '~/composables/useNavigationRoutes';
+	import useApi from '~/composables/useApi';
+	import { ref } from 'vue';
 
 	const { loadThemeSettingsDefault } = useWhiteLabelStore();
 	const store = useStore();
@@ -31,6 +33,7 @@
 
 	const notLoadingMember = ref(true);
 	const allowedItems = ref(null);
+	const addons = ref([]);
 
 	watchEffect(async (onCleanup) => {
 		if (store.isUrlValid) {
@@ -50,16 +53,53 @@
 
 	loadThemeSettingsDefault();
 
-
-
 	watch(
 		() => store.user?.data?.dark_mode,
 		() => {
-			store.user.data.dark_mode = JSON.parse(localStorage.getItem("isDarkMode")) || false;
+			store.user.data.dark_mode =
+				JSON.parse(localStorage.getItem('isDarkMode')) || false;
 
 			useToggleDarkMode(store.user.data.dark_mode);
 		}
 	);
+
+	async function getConfigurationList() {
+		try {
+			const filters = ref({
+				page: 1,
+				query: null,
+				page_size: 100
+			});
+
+			const { query, page, page_size } = filters.value;
+
+			const data = await useApi('configurationList.get', {
+				filters: {
+					...(query && { query }),
+					page,
+					page_size,
+					ordering: 'name',
+					'manifest.settings.ui.is_shown_in_sidenav': true
+				}
+			});
+
+			addons.value = data?.results || [];
+
+			addons.value = addons.value.map((item) => {
+				return {
+					key: item.configuration_code,
+					label:
+						item.manifest?.settings?.ui?.sidenav_label || item.name,
+					to: '/addons/' + item.configuration_code + '/',
+					href: null
+				};
+			});
+
+			console.log('addons', addons.value);
+		} catch (e) {
+			console.warn('CONFIGURATION LIST LOADING ERROR. ', e);
+		}
+	}
 
 	watch(
 		() => store.member,
@@ -67,10 +107,21 @@
 			const result = await init();
 			if (result) {
 				allowedItems.value = result;
+
+				console.log('result', result);
+
+				await getConfigurationList();
+
+				allowedItems.value = allowedItems.value.map((item) => {
+					if (item.key === 'add-ons') {
+						item.children = addons.value;
+					}
+
+					return item;
+				});
 			}
 		}
 	);
-
 </script>
 <style lang="scss" scoped>
 	.main {

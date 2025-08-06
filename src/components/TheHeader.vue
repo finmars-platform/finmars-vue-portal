@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-	import formbricks from '@/services/formbricks';
+	// import formbricks from '@/services/formbricks';
 
 	const store = useStore();
 	const config = useRuntimeConfig();
@@ -86,9 +86,9 @@
 	}
 
 	async function init() {
-		formbricks.setUserId(store.user.id);
-		formbricks.setEmail(store.user.email);
-		await formbricks.registerRouteChange();
+		// formbricks.setUserId(store.user.id);
+		// formbricks.setEmail(store.user.email);
+		// await formbricks.registerRouteChange();
 	}
 
 	function toggleTheme(val) {
