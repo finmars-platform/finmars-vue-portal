@@ -39,7 +39,7 @@ jobs:
           TAG="${{ inputs.version }}"
           docker buildx build \
             --push \
-            --platform linux/amd64 \
+            --platform linux/amd64,linux/arm64  \
             --tag ${{ secrets.CI_REGISTRY_IMAGE }}:$TAG \
             --sbom=true \
             --provenance=true \
