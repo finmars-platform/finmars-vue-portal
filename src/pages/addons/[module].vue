@@ -6,7 +6,7 @@
 		<div v-if="!errorMessage">
 			<iframe
 				:src="configurationUrl"
-				style="width: 100%; height: 100vh; border: 0"
+				style="width: 100%; height: calc(100vh - 100px); border: 0"
 			/>
 		</div>
 	</div>

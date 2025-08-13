@@ -131,7 +131,7 @@
 
 	.content {
 		flex-grow: 1;
-		height: calc(100vh - 80px);
+		height: calc(100vh - 100px);
 		overflow: auto;
 	}
 </style>
