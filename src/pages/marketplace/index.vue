@@ -32,18 +32,50 @@
 				@update:model-value="setFiltersQueryDebounced"
 			/>
 		</div>
-		<div v-if="readyStatus.data" class="list">
-			<FmCard
-				v-for="item in matchItems"
-				:key="item"
-				class="card"
+
+		<div style="margin: 24px 0; justify-content: end; display: flex">
+			<div
+				v-if="ecosystemDefaultsRef.license_key"
+				style="
+					display: flex;
+					justify-content: center;
+					align-items: center;
+				"
 			>
+				Linked with&nbsp;
+				<a
+					href="https://license.finmars.com/account/"
+					target="_blank"
+					style="text-decoration: underline"
+					>Finmars ID</a
+				>
+
+				<FmButton type="secondary" @click="unlinkWithFinmars"
+					>Unlink
+				</FmButton>
+			</div>
+
+			<div v-if="!ecosystemDefaultsRef.license_key">
+				<FmButton type="primary" @click="linkWithFinmars"
+					>Link with Finmars ID
+				</FmButton>
+			</div>
+		</div>
+
+		<div v-if="readyStatus.data" class="list">
+			<FmCard v-for="item in matchItems" :key="item" class="card">
 				<div class="row top">
 					<div class="image">
-						<img v-if="item.thumbnail" :src="item.thumbnail" alt="" />
+						<img
+							v-if="item.thumbnail"
+							:src="item.thumbnail"
+							alt=""
+						/>
 						<div
 							v-if="!item.thumbnail"
-							:style="{ backgroundColor: getAvatarColor(item.name?.[0]) }"
+							:style="{
+								backgroundColor: getAvatarColor(item.name?.[0])
+							}"
 							class="no-thumbnail"
 						>
 							{{ item.name?.charAt(0) }}
@@ -58,27 +90,44 @@
 							code:&nbsp;<b>{{ item.configuration_code }}</b>
 						</div>
 						<div class="version">
-							version:&nbsp;<b>{{ item.latest_release_object?.version }}</b>
+							version:&nbsp;<b>{{
+								item.latest_release_object?.version
+							}}</b>
 						</div>
 						<div class="license">
 							license:&nbsp;<b>{{ item.license }}</b>
 						</div>
-
-
 					</div>
 				</div>
 
-				<div class="configuration-short-description"><p>{{item.short_description}}</p></div>
+				<div class="configuration-short-description">
+					<p>{{ item.short_description }}</p>
+				</div>
 
 				<div class="org-badge-row">
-					<span class="org-name" v-if="!item.organization_object.website">By <i>{{ item.organization_object.name }}</i></span>
-					<span class="org-name" v-if="item.organization_object.website">By <i><a v-bind:href="item.organization_object.website" target="_blank">{{ item.organization_object.name }}</a></i></span>
+					<span
+						class="org-name"
+						v-if="!item.organization_object.website"
+						>By <i>{{ item.organization_object.name }}</i></span
+					>
+					<span
+						class="org-name"
+						v-if="item.organization_object.website"
+						>By
+						<i
+							><a
+								v-bind:href="item.organization_object.website"
+								target="_blank"
+								>{{ item.organization_object.name }}</a
+							></i
+						></span
+					>
 					<span
 						class="tier-badge"
 						:class="item.pricing_tier === 'paid' ? 'paid' : 'free'"
 					>
-    {{ item.pricing_tier === 'paid' ? 'Paid' : 'Free' }}
-  </span>
+						{{ item.pricing_tier === 'paid' ? 'Paid' : 'Free' }}
+					</span>
 				</div>
 
 				<div v-if="!item.localItem && item.is_allowed_to_install">
@@ -92,22 +141,21 @@
 				</div>
 
 				<div v-if="!item.localItem && !item.is_allowed_to_install">
-					<FmBtn
-						type="primary"
-						class="open disabled-btn"
-					>
+					<FmBtn type="primary" class="open disabled-btn">
 						License Required
 					</FmBtn>
 				</div>
 
 				<div v-if="item.localItem" class="m-b-8">
 					<div class="current">
-						Current: ({{ item.localItem.version }} {{ item.localItem.channel }})
+						Current: ({{ item.localItem.version }}
+						{{ item.localItem.channel }})
 					</div>
 
 					<div
 						v-if="
-							item.latest_release_object?.version === item.localItem.version
+							item.latest_release_object?.version ===
+							item.localItem.version
 						"
 					>
 						<FmBtn
@@ -120,7 +168,8 @@
 
 					<div
 						v-if="
-							item.latest_release_object?.version !== item.localItem.version
+							item.latest_release_object?.version !==
+							item.localItem.version
 						"
 					>
 						<FmBtn
@@ -132,11 +181,9 @@
 					</div>
 				</div>
 
-
 				<div @click="openCard(item.id)" class="show-details-button">
 					Show Details
 				</div>
-
 			</FmCard>
 		</div>
 		<div v-else style="width: 100%" class="row">
@@ -185,11 +232,16 @@
 	import { getAvatarColor } from '~/utils/commonHelper';
 
 	definePageMeta({
-		middleware: 'auth',
+		middleware: 'auth'
 	});
 
 	const route = useRoute();
 	const router = useRouter();
+	const store = useStore();
+
+	const ecosystemDefaultsRef = ref(
+		JSON.parse(JSON.stringify(store.ecosystemDefaults))
+	);
 
 	const {
 		getData,
@@ -214,9 +266,80 @@
 		router.push(useGetNuxtLink(`/marketplace/${id}`, route.params));
 	}
 
-	onMounted(() => {
+	onMounted(async () => {
 		getData();
+
+		// 1. See if URL has “#access_token=…”
+		if (window.location.hash) {
+			const hash = window.location.hash.slice(1); // drop the “#”
+			const params = new URLSearchParams(hash);
+			const token = params.get('access_token');
+
+			console.log('ACCESS TOKEN FOR LICENSE SERVER IS RECEIVED!', token);
+
+			if (token) {
+				// 2. Clean up the URL (remove the hash)
+				window.history.replaceState(null, '', window.location.pathname);
+
+				// 3. Call your license API
+				try {
+					const response = await fetch(
+						'https://license.finmars.com/api/v1/license-key/',
+						{ headers: { Authorization: `Token ${token}` } }
+					).then(function (response) {
+						return response.json();
+					});
+					let key = null;
+
+					if (response.results.length) {
+						key = response.results[0].key;
+					}
+
+					// 4. Save the key
+					localStorage.setItem('finmarsLicenseKey', key);
+
+					ecosystemDefaultsRef.value.license_key = key;
+
+					let res = await useApi('defaultSettings.put', {
+						params: { id: ecosystemDefaultsRef.value.id },
+						body: ecosystemDefaultsRef.value
+					});
+
+					// 5. Show success (you can update your UI as you like)
+					console.log('✅ License linked:', res);
+				} catch (e) {
+					console.error('❌ Could not fetch license', e);
+				}
+			}
+		}
 	});
+
+	const clientId = 'finmars-license';
+	const realm = 'finmars'; // e.g. “finmars”
+	const origin = window.location.origin;
+	const pathName = window.location.pathname;
+	const redirectUri = encodeURIComponent(origin + pathName);
+
+	function linkWithFinmars() {
+		const url =
+			`https://id-auth.finmars.io/realms/${realm}` +
+			`/protocol/openid-connect/auth` +
+			`?client_id=${clientId}` +
+			`&redirect_uri=${redirectUri}` +
+			`&response_type=token` +
+			`&scope=openid`;
+
+		window.location.href = url;
+	}
+
+	async function unlinkWithFinmars() {
+		ecosystemDefaultsRef.value.license_key = '';
+
+		let res = await useApi('defaultSettings.put', {
+			params: { id: ecosystemDefaultsRef.value.id },
+			body: ecosystemDefaultsRef.value
+		});
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -242,8 +365,8 @@
 		}
 
 		.card {
-			aspect-ratio: 3 / 2;    /* width-to-height ratio */
-			height: auto;           /* height follows the ratio */
+			aspect-ratio: 3 / 2; /* width-to-height ratio */
+			height: auto; /* height follows the ratio */
 			width: 100%;
 			//padding: 16px 16px 46px;
 			border: 1px solid var(--table-border-color);
@@ -307,8 +430,9 @@
 				position: absolute;
 				bottom: 20px;
 				left: 18px;
+
 				&:hover {
-					opacity: .8;
+					opacity: 0.8;
 				}
 			}
 
@@ -325,7 +449,7 @@
 
 				&.disabled-btn {
 					pointer-events: none;
-					opacity: .7;
+					opacity: 0.7;
 				}
 			}
 
