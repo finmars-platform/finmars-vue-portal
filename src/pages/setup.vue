@@ -1,22 +1,9 @@
 <template>
 	<div class="setup_wrap">
-		<div class="step_1" v-if="step == 1">
+
+		<div class="step_2">
 			<h1 class="tac">Welcome</h1>
 			<h2 class="tac">Setup your account</h2>
-			<h3 class="tac">Step 1 / 2</h3>
-			Please select your complexity level:
-			<FmSelect v-model="store.member.interface_level" :items="levels" />
-
-			<div class="btns flex sb">
-				<FmBtn type="action" href="/v/profile">Cancel</FmBtn>
-				<FmBtn class="btn" @click="next()">Next</FmBtn>
-			</div>
-		</div>
-
-		<div class="step_2" v-if="step == 2">
-			<h1 class="tac">Welcome</h1>
-			<h2 class="tac">Setup your account</h2>
-			<h3 class="tac">Step 2 / 2</h3>
 
 			<div class="tac m-b-24">
 				Please select init configuration you would like to use
