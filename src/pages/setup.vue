@@ -109,7 +109,7 @@
 			// useRouter().push('/home')
 			// TODO redirect to home with reloading SPA
 			window.location.href =
-				'/' + store.realm_code + '/' + store.space_code + '/v/home';
+				'/' + store.realm_code + '/' + store.space_code + '/a/#!/dashboard';
 			return false;
 		}
 
@@ -136,7 +136,7 @@
 				// useRouter().push('/home')
 				// TODO redirect to home with reloading SPA
 				window.location.href =
-					'/' + store.realm_code + '/' + store.space_code + '/v/home';
+					'/' + store.realm_code + '/' + store.space_code + '/a/#!/dashboard';
 			}
 		};
 
