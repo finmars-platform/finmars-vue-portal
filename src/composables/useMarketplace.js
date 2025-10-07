@@ -135,7 +135,7 @@ export function useMarketplace() {
 			const data = await useApi('marketplaceList.get', {
 				filters: payload,
 				headers: {
-					'X-License': store.ecosystemDefaults.license_key
+					'X-Client-Code': store.ecosystemDefaults.license_key
 				}
 			});
 
