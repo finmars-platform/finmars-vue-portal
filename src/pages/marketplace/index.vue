@@ -290,15 +290,18 @@
 						return response.json();
 					});
 					let key = null;
+					let key_object = null;
 
 					if (response.results.length) {
+						key_object = response.results[0];
 						key = response.results[0].key;
 					}
 
 					// 4. Save the key
 					localStorage.setItem('finmarsLicenseKey', key);
+					localStorage.setItem('finmarsClientCode', key_object.client_object.client_code);
 
-					ecosystemDefaultsRef.value.license_key = key;
+					ecosystemDefaultsRef.value.license_key = key_object.client_object.client_code;
 
 					let res = await useApi('defaultSettings.put', {
 						params: { id: ecosystemDefaultsRef.value.id },
