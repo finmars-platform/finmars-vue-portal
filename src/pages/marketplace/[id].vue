@@ -250,7 +250,7 @@
 		try {
 			item.value = await useApi('marketplaceItem.get', {
 				params: { id: route.params.id },
-				headers: { 'X-License': store.ecosystemDefaults.license_key }
+				headers: { 'X-Client-Code': store.ecosystemDefaults.license_key }
 			});
 			readyStatus.data = true;
 		} catch {
@@ -275,7 +275,7 @@
 		try {
 			const data = await useApi('marketplaceItemVersion.get', {
 				filters: payload,
-				headers: { 'X-License': store.ecosystemDefaults.license_key }
+				headers: { 'X-Client-Code': store.ecosystemDefaults.license_key }
 			});
 			versions.value = data.results;
 			if (versions.value.length) version.value = versions.value[0].version;
