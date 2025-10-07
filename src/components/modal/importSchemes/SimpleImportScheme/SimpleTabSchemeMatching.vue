@@ -92,7 +92,11 @@
 				});
 
 				return res;
-			}, []);
+			}, []).sort((a, b) => {
+				const aKey = a.system_property_key || a.name || '';
+				const bKey = b.system_property_key || b.name || '';
+				return aKey.localeCompare(bKey);
+			});
 	});
 
 	const expressionEditorSelectorData = computed(() => {
