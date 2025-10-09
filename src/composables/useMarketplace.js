@@ -1,13 +1,13 @@
-import { debounce } from 'lodash';
-import { storeToRefs } from 'pinia';
+import {debounce} from 'lodash';
+import {storeToRefs} from 'pinia';
 import useStore from '~/stores/useStore';
 import cloneDeep from 'lodash/cloneDeep';
 
 export function useMarketplace() {
-	const { configCodes } = storeToRefs(useStore());
+	const {configCodes} = storeToRefs(useStore());
 	const store = useStore();
 	const items = ref([]);
-	const readyStatus = reactive({ data: false });
+	const readyStatus = reactive({data: false});
 	const filters = reactive({});
 
 	const totalPages = ref(1);
@@ -115,6 +115,19 @@ export function useMarketplace() {
 		}
 	}
 
+	function buyConfiguration(configuration) {
+
+		const client_code = store.ecosystemDefaults.license_key
+		const user_return_url = window.location.href;
+
+		fetch("https://marketplace.finmars.com/api/v1/checkout/?configuration_code=" + configuration.configuration_code + "&client_code=" + client_code + "&user_return_url=" + user_return_url).then((res) => res.json()).then((data) => {
+
+			window.location.href = data.checkout_url
+
+		})
+
+	}
+
 	async function getData() {
 		readyStatus.data = false;
 
@@ -209,6 +222,7 @@ export function useMarketplace() {
 		openPage,
 		setFiltersQueryDebounced,
 		setShowModules,
-		removeActiveTaskId
+		removeActiveTaskId,
+		buyConfiguration
 	};
 }
