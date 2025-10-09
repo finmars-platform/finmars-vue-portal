@@ -140,9 +140,15 @@
 					</FmBtn>
 				</div>
 
-				<div v-if="!item.localItem && !item.is_allowed_to_install">
+				<div v-if="!item.localItem && !item.is_allowed_to_install && !item.unit_amount">
 					<FmBtn type="primary" class="open disabled-btn">
 						License Required
+					</FmBtn>
+				</div>
+
+				<div v-if="!item.localItem && !item.is_allowed_to_install && item.unit_amount">
+					<FmBtn type="primary" class="open" @click.prevent.stop="buyConfiguration(item)">
+						Buy {{item.unit_amount / 100}} €
 					</FmBtn>
 				</div>
 
@@ -250,6 +256,7 @@
 		filters,
 		matchItems,
 		installConfiguration,
+		buyConfiguration,
 		currentPage,
 		totalPages,
 		pages,
