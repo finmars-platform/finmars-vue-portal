@@ -21,6 +21,7 @@ export default defineNuxtConfig({
 
 			buildDATE: dayjs().format('HH:mm DD/MM/YYYY'),
 			EDITION_TYPE: process.env.EDITION_TYPE || '==PROD_EDITION_TYPE==',
+			SENTRY_DSN: process.env.SENTRY_DSN || '==SENTRY_DSN==',
 		}
 	},
 	ssr: false,
