@@ -27,6 +27,14 @@
 					v-model="currentItem.notes"
 				/>
 			</div>
+			<FmSearch
+				:items="sources"
+				v-model="currentItem.source"
+				placeholder="Source"
+				chips
+				closable-chips
+				clearable
+			/>
 		</div>
 		<template #controls>
 			<div class="flex aic sb">
@@ -47,7 +55,7 @@
 </template>
 
 <script setup>
-	import { FmButton, FmTextField } from '@finmars/ui';
+	import { FmButton, FmSearch, FmTextField } from '@finmars/ui';
 
 	const props = defineProps({
 		item: {
@@ -59,7 +67,7 @@
 			type: String,
 			default: 'create'
 		},
-		portfoliosOptions: {
+		sources: {
 			type: Array,
 			default() {
 				return [];

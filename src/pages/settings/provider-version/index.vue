@@ -34,6 +34,7 @@
 				v-model="showModal"
 				:modal-type="modalType"
 				:item="selectedItem"
+				:providers="providers"
 				:title="modalTitle"
 				@close="closeModal"
 				@edit="editItem"
@@ -58,6 +59,7 @@
 	const modalType = ref('create');
 	const modalTitle = ref('Create Provider Version');
 	const items = ref([]);
+	const providers = ref([]);
 
 	const selectedItem = ref({});
 
@@ -68,7 +70,7 @@
 			user_code: item?.user_code || '',
 			short_name: item?.short_name || '',
 			notes: item?.notes || '',
-			provider: item?.provider || '' // TODO add provider select to dialog
+			provider: item?.provider || null // TODO add provider select to dialog
 		};
 	};
 
@@ -78,6 +80,24 @@
 			const res = await useApi('providerVersion.get');
 			items.value = res.results;
 			selectedItem.value = getEditableObject(null);
+		} catch (e) {
+			console.log(`Catch error: ${e}`);
+		} finally {
+			loading.value = false;
+		}
+	}
+
+	async function getProvidersList() {
+		try {
+			loading.value = true;
+			const res = await useApi('provider.get');
+
+			providers.value = res.results.map((result) => {
+				return {
+					title: result.name,
+					value: result.id
+				};
+			});
 		} catch (e) {
 			console.log(`Catch error: ${e}`);
 		} finally {
@@ -150,6 +170,7 @@
 
 	async function init() {
 		await getItemsList();
+		await getProvidersList();
 	}
 
 	init();

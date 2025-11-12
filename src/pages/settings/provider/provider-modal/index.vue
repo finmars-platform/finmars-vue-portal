@@ -58,12 +58,6 @@
 		modalType: {
 			type: String,
 			default: 'create'
-		},
-		portfoliosOptions: {
-			type: Array,
-			default() {
-				return [];
-			}
 		}
 	});
 

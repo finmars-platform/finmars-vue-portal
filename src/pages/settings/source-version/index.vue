@@ -35,6 +35,7 @@
 				:modal-type="modalType"
 				:item="selectedItem"
 				:title="modalTitle"
+				:sources="sources"
 				@close="closeModal"
 				@edit="editItem"
 				@create="createItem"
@@ -58,6 +59,7 @@
 	const modalType = ref('create');
 	const modalTitle = ref('Create Source Version');
 	const items = ref([]);
+	const sources = ref([]);
 
 	const selectedItem = ref({});
 
@@ -68,7 +70,7 @@
 			user_code: item?.user_code || '',
 			short_name: item?.short_name || '',
 			notes: item?.notes || '',
-			source: item?.source || '' // TODO add source select to dialog
+			source: item?.source || null // TODO add source select to dialog
 		};
 	};
 
@@ -78,6 +80,24 @@
 			const res = await useApi('sourceVersion.get');
 			items.value = res.results;
 			selectedItem.value = getEditableObject(null);
+		} catch (e) {
+			console.log(`Catch error: ${e}`);
+		} finally {
+			loading.value = false;
+		}
+	}
+
+	async function getSourcesList() {
+		try {
+			loading.value = true;
+			const res = await useApi('source.get');
+
+			sources.value = res.results.map((result) => {
+				return {
+					title: result.name,
+					value: result.id
+				};
+			});
 		} catch (e) {
 			console.log(`Catch error: ${e}`);
 		} finally {
@@ -152,6 +172,7 @@
 
 	async function init() {
 		await getItemsList();
+		await getSourcesList();
 	}
 
 	init();
