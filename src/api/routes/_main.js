@@ -936,6 +936,36 @@ export default {
 		put: prefix + '/clients/client/{id}/',
 		delete: prefix + '/clients/client/{id}/'
 	},
+	provider: {
+		get: prefix + '/provenance/provider/',
+		post: prefix + '/provenance/provider/',
+		put: prefix + '/provenance/provider/{id}/',
+		delete: prefix + '/provenance/provider/{id}/'
+	},
+	providerVersion: {
+		get: prefix + '/provenance/provider-version/',
+		post: prefix + '/provenance/provider-version/',
+		put: prefix + '/provenance/provider-version/{id}/',
+		delete: prefix + '/provenance/provider-version/{id}/'
+	},
+	source: {
+		get: prefix + '/provenance/source/',
+		post: prefix + '/provenance/source/',
+		put: prefix + '/provenance/source/{id}/',
+		delete: prefix + '/provenance/source/{id}/'
+	},
+	sourceVersion: {
+		get: prefix + '/provenance/source-version/',
+		post: prefix + '/provenance/source-version/',
+		put: prefix + '/provenance/source-version/{id}/',
+		delete: prefix + '/provenance/source-version/{id}/'
+	},
+	platformVersion: {
+		get: prefix + '/provenance/platform-version/',
+		post: prefix + '/provenance/platform-version/',
+		put: prefix + '/provenance/platform-version/{id}/',
+		delete: prefix + '/provenance/platform-version/{id}/'
+	},
 	manageConfigurationList: {
 		get: prefix + '/configuration/configuration/'
 	},
