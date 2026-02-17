@@ -559,14 +559,6 @@ async function _calcReportForBundle(bundle, row, rowRaw, abortSignal) {
 
                 row[key] = "-";
 
-            } else {
-
-                console.error(`[RvPerformanceBundle _calcReportForBundle] A cell '${key}' of a row '${row.user_code}' '${row.id}' lacks a data for the error 'no_portfolio_register_records'`);
-
-                rowRaw[errorKey] = {
-                    description: "No portfolio register records for the period of performance report"
-                };
-
             }
 
         })
